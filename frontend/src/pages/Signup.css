@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+}
+
+.container{
+    width:100vw;
+    min-height:100vh;
+
+    background-image:url("../assets/bakery-bg.png");
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+.overlay{
+    min-height:100vh;
+
+    background:rgba(0,0,0,0.15);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    padding:10px 20px;
+}
+
+.hero{
+    text-align:center;
+}
+
+.welcome-text{
+    color:#ff9dc4;
+    letter-spacing:10px;
+    font-size:1.1rem;
+    margin-bottom:10px;
+}
+
+.logo{
+    font-family:'Great Vibes',cursive;
+    font-size:4rem;
+    color:white;
+    line-height:1;
+    text-shadow:0 0 25px rgba(255,180,210,0.3);
+}
+
+.tagline{
+    color:white;
+    font-size:1.2rem;
+    margin-top:10px;
+}
+
+.signup-card{
+    margin-top:35px;
+
+    width:550px;
+    max-width:90%;
+
+    padding:30px;
+
+    border-radius:30px;
+
+    background:rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    border:1px solid rgba(255,255,255,0.2);
+
+    box-shadow:
+        0 8px 32px rgba(255,182,193,0.15);
+
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.signup-card h2{
+    color:white;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.signup-card input{
+    padding:14px;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,0.25);
+
+    background:rgba(255,255,255,0.05);
+
+    color:white;
+
+    outline:none;
+
+    font-size:1rem;
+}
+
+.signup-card input::placeholder{
+    color:#d4d4d4;
+}
+
+.signup-card button{
+    padding:14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ff8fb3;
+
+    color:black;
+
+    font-weight:600;
+
+    font-size:1.1rem;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.signup-card button:hover{
+    transform:translateY(-2px);
+}
+
+.login-link{
+    text-align:center;
+    color:white;
+    margin-top:5px;
+}
+
+.login-link span{
+    color:#ff9dc4;
+    cursor:pointer;
+}
+
+.bottom-section{
+    margin-top:20px;
+    text-align:center;
+}
+
+.bottom-section h2{
+    color:white;
+    font-weight:500;
+}
+
+.bottom-section span{
+    color:#ff9dc4;
+}
+
+.features{
+    display:flex;
+    justify-content:center;
+    gap:50px;
+
+    margin-top:15px;
+
+    flex-wrap:wrap;
+}
+
+.feature{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    color:white;
+
+    gap:10px;
+}
+
+.feature svg{
+    font-size:2.2rem;
+    color:#ff9dc4;
+}
+
+.feature p{
+    font-size:0.9rem;
+}
+
+.login-link a{
+    color:#ff9dc4;
+    text-decoration:none;
+    font-weight:500;
+}
+
+.login-link a:hover{
+    text-decoration:underline;
+}
+
+.password-container{
+    position:relative;
+    width:100%;
+}
+
+.password-container input{
+    width:100%;
+    padding-right:45px;
+}
+
+.eye-icon{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#ff9dc4;
+    cursor:pointer;
+    z-index:10;
+}
+
+.error-message{
+    color:#ffb3b3;
+    font-size:0.9rem;
+    text-align:center;
+}
