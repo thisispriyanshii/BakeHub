@@ -10,7 +10,7 @@ body{
     font-family:'Poppins',sans-serif;
 }
 
-.container{
+.auth-container{
     width:100vw;
     min-height:100vh;
 
@@ -20,7 +20,7 @@ body{
     background-repeat:no-repeat;
 }
 
-.overlay{
+.auth-overlay{
     min-height:100vh;
 
     background:rgba(0,0,0,0.15);

@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Link ,useNavigate} from "react-router-dom";
 import "./Signup.css";
-import { Link } from "react-router-dom";
 
 import {
   FaBirthdayCake,
@@ -12,40 +12,80 @@ import {
 } from "react-icons/fa";
 
 function Login() {
+
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim()) {
       setError("Please enter your email");
+      setSuccess("");
       return;
     }
 
     if (!password.trim()) {
       setError("Please enter your password");
+      setSuccess("");
       return;
     }
 
     if (password.length < 6) {
       setError("Password must be at least 6 characters");
+      setSuccess("");
       return;
     }
 
     setError("");
+    setSuccess("");
 
-    console.log({
-      email,
-      password,
-    });
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || data.error || "Login failed");
+        return;
+      }
+
+      if (!data.token) {
+        setError("Login succeeded but no token was returned.");
+        return;
+      }
+
+      localStorage.setItem("bakehub_token", data.token);
+      setSuccess("Login successful.");
+
+
+     setTimeout(() => {
+       navigate("/home"); // or "/dashboard"
+     }, 1000);
+
+    setEmail("");
+          setPassword("");
+    } catch (fetchError) {
+      setError("Unable to reach the server. Please try again.");
+    }
   };
 
   return (
-    <div className="container">
-      <div className="overlay">
+    <div className="auth-container">
+      <div className="auth-overlay">
         <div className="hero">
           <h4 className="welcome-text">WELCOME TO</h4>
 
@@ -85,6 +125,12 @@ function Login() {
           {error && (
             <p className="error-message">
               {error}
+            </p>
+          )}
+
+          {success && (
+            <p className="success-message">
+              {success}
             </p>
           )}
 
