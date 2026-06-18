@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "product")
@@ -24,8 +25,9 @@ public class Product {
     @Positive(message = "Price must be greater than 0")
     private Double price;
 
-    @NotBlank(message = "Category is required")
-    private String category;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @NotBlank(message = "Image URL is required")
     private String imageUrl;
@@ -33,7 +35,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, Double price, String category, String imageUrl) {
+    public Product(String name, Double price, Category category, String imageUrl) {
         this.name = name;
         this.price = price;
         this.category = category;
@@ -64,11 +66,11 @@ public class Product {
         this.price = price;
     }
 
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

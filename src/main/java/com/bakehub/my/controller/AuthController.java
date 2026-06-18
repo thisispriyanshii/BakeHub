@@ -1,5 +1,8 @@
 package com.bakehub.my.controller;
 
+import com.bakehub.my.dto.AuthRequest;
+import com.bakehub.my.dto.AuthResponse;
+import com.bakehub.my.entity.Role;
 import com.bakehub.my.entity.User;
 import com.bakehub.my.service.UserService;
 import com.bakehub.my.util.JwtUtil;
@@ -29,39 +32,36 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user){
+    public ResponseEntity<?> signup(@RequestBody AuthRequest request){
+        if (userService.findByEmail(request.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email already exists");
+        }
 
-     if(userService.findByEmail(user.getEmail()).isPresent()){
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.CUSTOMER);
+        userService.save(user);
 
-         return ResponseEntity.badRequest().body("Email already exists");
-
-     }
-
-     user.setPassword(passwordEncoder.encode(user.getPassword()));
-     userService.save(user);
-
-     return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user){
+    public ResponseEntity<?> login(@RequestBody AuthRequest request){
+        Optional<User> existing = userService.findByEmail(request.getEmail());
 
-        Optional<User> existing = userService.findByEmail(user.getEmail());
-
-        if(existing.isEmpty()){
+        if (existing.isEmpty()) {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if(!passwordEncoder.matches(user.getPassword(),existing.get().getPassword())){
+        User user = existing.get();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.badRequest().body("Invalid password");
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
-        return ResponseEntity.ok(Map.of("token", token));
-
-
-
-
+        return ResponseEntity.ok(new AuthResponse(token, user.getRole().name()));
     }
 
 
