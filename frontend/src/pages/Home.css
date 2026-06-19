@@ -1,6 +1,7 @@
 .home-page {
   background: white;
   min-height: 100vh;
+
 }
 
 .banner {
@@ -39,6 +40,8 @@
 }
 
 .banner3-content {
+  font-family: serif;
+  font-style: italic;
   text-align: center;
   color: white;
   max-width: 600px;
@@ -46,7 +49,7 @@
 }
 
 .banner3-content h2 {
-  font-size: 2rem;
+  font-size: 3rem;
   line-height: 1.15;
   margin-bottom: 12px;
   color: #111111;
@@ -54,7 +57,7 @@
 }
 
 .banner3-content p {
-  font-size: 0.92rem;
+  font-size: 0.99rem;
   line-height: 1.6;
   color: #4a4a4a;
   margin-bottom: 16px;
@@ -65,6 +68,8 @@
 }
 
 .banner4 {
+  font-family: serif;
+  font-style: italic;
   position: relative;
   width: 100%;
   margin: 0;
@@ -138,6 +143,8 @@
 }
 
 .banner-content {
+  font-family: serif;
+  font-style: italic;
   position: absolute; /* Lifts the content onto the image */
   top: 50%;
   left: 5%;

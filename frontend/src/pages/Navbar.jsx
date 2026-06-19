@@ -54,10 +54,10 @@ function Navbar() {
     navigate("/cart");
   };
 
-  const totalCartItems = cartItems.reduce(
-    (sum, item) => sum + (Number(item.quantity) || 1),
-    0
-  );
+  const totalCartItems = cartItems.reduce((sum, item) => {
+    const qty = Math.max(0, Math.min(1000, Number(item.quantity) || 1));
+    return sum + qty;
+  }, 0);
 
   const totalCartPrice = cartItems.reduce(
     (sum, item) => sum + (item.estimatedPrice || 0),

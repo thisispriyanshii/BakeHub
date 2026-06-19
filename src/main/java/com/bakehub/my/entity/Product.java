@@ -35,6 +35,8 @@ public class Product {
     @NotBlank(message = "Image URL is required")
     private String imageUrl;
 
+    private Integer calories;
+
     public Product() {
     }
 
@@ -83,5 +85,21 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getCalories() {
+        return calories;
+    }
+
+    public void setCalories(Integer calories) {
+        this.calories = calories;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

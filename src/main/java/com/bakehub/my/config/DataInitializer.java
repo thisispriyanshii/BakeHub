@@ -50,6 +50,8 @@ public class DataInitializer {
                         category,
                         "/images/custom-cake.png"
                 );
+                customCake.setDescription("Design your own celebration cake");
+                customCake.setCalories(1200);
                 productRepository.save(customCake);
             }
         };

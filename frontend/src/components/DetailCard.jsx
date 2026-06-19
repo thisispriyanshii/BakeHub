@@ -10,6 +10,12 @@ function DetailCard({ product, reversed, quantity, onIncrement, onDecrement }) {
       <div className="card-copy">
         <h3>{product.name}</h3>
         <p>{product.description}</p>
+        {product.calories != null && (
+          <div className="calories-label">
+            <span className="fire-icon">🔥</span>
+            <span>{product.calories} kcal</span>
+          </div>
+        )}
         <div className="card-footer">
           <span className="price-bubble">₹{product.price.toFixed(2)}</span>
           <div className="cart-controls">

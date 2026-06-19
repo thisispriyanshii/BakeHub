@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import { submitMenuOrder, getToken } from "../api/client";
+import { submitMenuOrder, submitCustomCakeOrder, getToken } from "../api/client";
 import "./Cart.css";
 
 const CART_KEY = "bakehub_cart";
@@ -68,8 +68,10 @@ function Cart() {
     }
 
     const menuItems = cartItems.filter((item) => item.type === "menu");
-    if (menuItems.length === 0) {
-      setFeedback({ type: "error", message: "No menu items found in cart." });
+    const customItems = cartItems.filter((item) => item.type === "custom");
+
+    if (menuItems.length === 0 && customItems.length === 0) {
+      setFeedback({ type: "error", message: "No items found in cart." });
       return;
     }
 
@@ -77,23 +79,33 @@ function Cart() {
     setFeedback({ type: "", message: "" });
 
     try {
-      const orderPayload = {
-        userId: null,
-        deliveryAddress: address.trim(),
-        latitude: null,
-        longitude: null,
-        items: menuItems.map((item) => ({
-          productId: item.id,
-          quantity: item.quantity,
-          customizationDetails: JSON.stringify({
-            name: item.name,
-          }),
-        })),
-      };
+      if (menuItems.length > 0) {
+        const orderPayload = {
+          userId: null,
+          deliveryAddress: address.trim(),
+          latitude: null,
+          longitude: null,
+          items: menuItems.map((item) => ({
+            productId: item.id,
+            quantity: item.quantity,
+            customizationDetails: JSON.stringify({
+              name: item.name,
+            }),
+          })),
+        };
 
-      await submitMenuOrder(orderPayload);
+        await submitMenuOrder(orderPayload);
+      }
 
-      const remainingItems = cartItems.filter((item) => item.type !== "menu");
+      for (const item of customItems) {
+        const customPayload = {
+          ...item,
+          deliveryAddress: address.trim(),
+        };
+        await submitCustomCakeOrder(customPayload);
+      }
+
+      const remainingItems = [];
       localStorage.setItem(CART_KEY, JSON.stringify(remainingItems));
       window.dispatchEvent(new Event("cart-updated"));
       setCartItems(remainingItems);

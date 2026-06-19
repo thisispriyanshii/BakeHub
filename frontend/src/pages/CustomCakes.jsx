@@ -249,15 +249,12 @@ function CustomCakes() {
     hasReferenceImage: Boolean(referenceImage),
   });
 
-  const validateOrder = () => {
-    if (!deliveryAddress.trim()) {
+  const validateOrder = (requireDelivery = true) => {
+    if (requireDelivery && !deliveryAddress.trim()) {
       return "Please enter a delivery address.";
     }
     if (!deliveryDate) {
       return "Please choose a delivery date.";
-    }
-    if (!deliveryTime) {
-      return "Please choose a delivery time.";
     }
     return "";
   };
@@ -296,14 +293,18 @@ function CustomCakes() {
   };
 
   const handleAddToCart = () => {
-    const validationError = validateOrder();
+    // Adding to cart should not require a delivery address; skip that check here.
+    const validationError = validateOrder(false);
     if (validationError) {
       setFeedback({ type: "error", message: validationError });
       return;
     }
 
     const cartItem = {
-      id: Date.now(),
+      id: `custom-${Date.now()}`,
+      name: `Custom Cake`,
+      type: "custom",
+      quantity: 1,
       ...buildOrderPayload(),
       estimatedPrice,
       createdAt: new Date().toISOString(),
@@ -325,7 +326,7 @@ function CustomCakes() {
       <section className="custom-hero">
         <div className="hero-copy">
           <span className="eyebrow">Design Your Dream Cake</span>
-          <h1>Design Your Dream Cake 🎂</h1>
+          <h1>Mix, Match & Make It Yours</h1>
           <p>
             Choose flavors, size, frosting, theme and message. We'll bake it exactly the way
             you imagine.
@@ -515,14 +516,6 @@ function CustomCakes() {
               <h2>Delivery Details</h2>
             </div>
             <div className="delivery-details">
-              <label>
-                Delivery Address
-                <textarea
-                  value={deliveryAddress}
-                  onChange={(event) => setDeliveryAddress(event.target.value)}
-                  placeholder="House number, street, city, pin code"
-                />
-              </label>
               <div className="date-time-grid">
                 <label>
                   Delivery Date
@@ -530,14 +523,6 @@ function CustomCakes() {
                     type="date"
                     value={deliveryDate}
                     onChange={(event) => setDeliveryDate(event.target.value)}
-                  />
-                </label>
-                <label>
-                  Delivery Time
-                  <input
-                    type="time"
-                    value={deliveryTime}
-                    onChange={(event) => setDeliveryTime(event.target.value)}
                   />
                 </label>
               </div>
@@ -604,13 +589,10 @@ function CustomCakes() {
               <button
                 type="button"
                 className="primary-btn"
-                onClick={handleRequestCustomCake}
+                onClick={handleAddToCart}
                 disabled={submitting}
               >
-                {submitting ? "Submitting..." : "Request Custom Cake"}
-              </button>
-              <button type="button" className="secondary-btn" onClick={handleAddToCart}>
-                Add To Cart
+                {submitting ? "Submitting..." : "Add To Cart"}
               </button>
             </div>
           </div>

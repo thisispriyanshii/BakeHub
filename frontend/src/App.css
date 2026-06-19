@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
 *{
   margin:0;
   padding:0;
@@ -9,4 +11,18 @@ body,
 #root{
   width:100%;
   min-height:100vh;
+}
+
+body {
+  background: #FFFFFF;
+  font-family: 'Patrick Hand', cursive;
+  color: #121212;
+}
+
+:root {
+  --peach: #F7E4DD; /* warm peach */
+  --pink: #F36B89;  /* accent pink */
+  --soft-peach: #FDF0EE; /* soft surface */
+  --black: #121212;
+  --muted: #6B5B52;
 }

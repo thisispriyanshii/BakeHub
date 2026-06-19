@@ -3,11 +3,14 @@
   grid-template-columns: 1fr 1fr;
   gap: 32px;
   align-items: center;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 24px 60px rgba(38, 29, 38, 0.08);
-  border-radius: 28px;
-  overflow: hidden;
-  padding: 0;
+   background: #FFFDFD;
+   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+   border-radius: 24px;
+   overflow: hidden;
+   padding: 36px;
+   border: 1px solid rgba(236, 92, 135, 0.15);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 
 .detail-card.reverse {
@@ -19,30 +22,67 @@
   direction: ltr;
 }
 
-.card-image img {
+.card-image {
   width: 100%;
+  height: 100%;
+  min-height: 300px;
+  overflow: hidden;
+   background: linear-gradient(135deg, #FCE8E6 0%, #FFE7E3 100%);
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.detail-card:hover .card-image img {
+  transform: scale(1.05);
 }
 
 .card-copy {
-  padding: 40px 36px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card-copy h3 {
-  font-family: "Patrick Hand", cursive;
-  font-size: clamp(2rem, 2.5vw, 2.8rem);
-  color: #442b2b;
-  margin: 0 0 18px;
+  font-family: serif;
+  font-size: clamp(1.4rem, 1.8vw, 2rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #111111;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 .card-copy p {
-  font-family: "Inter", sans-serif;
-  font-size: 1rem;
-  line-height: 1.9;
-  color: #4a3a3d;
-  margin: 0 0 24px;
+  font-family: serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4a4a4a;
+  margin: 0 0 16px;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.calories-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 6px 12px;
+  background: #FCE8E6;
+  border: 1px solid #FAD4D0;
+  border-radius: 999px;
+  color: #C85A6B;
+  font-weight: 400;
+  font-size: 0.8rem;
+  font-family: serif;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  width: fit-content;
+  flex: none;
 }
 
 .card-footer {
@@ -50,69 +90,159 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  margin-top: auto;
+  padding-top: 12px;
 }
 
 .price-bubble {
-  display: inline-block;
-  padding: 14px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
   border-radius: 999px;
-  background: #fde6ff;
-  color: #5a2f56;
-  font-weight: 700;
+  background: #ec5c87;
+  color: #ffffff;
+  font-weight: 400;
   font-size: 1rem;
+  font-family: serif;
 }
 
 .cart-controls {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  background: #f7ecff;
+  justify-content: center;
+  gap: 8px;
+  background: #FFF5F4;
+  border: 1px solid #FAD4D0;
   border-radius: 999px;
-  padding: 8px 12px;
+  padding: 6px 8px;
+  transition: all 0.3s ease;
+}
+
+.cart-controls:hover {
+  background: #FFE7E3;
+  border-color: #ec5c87;
 }
 
 .cart-controls button {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: none;
   border-radius: 50%;
-  background: #6c4d8d;
+  background: #ec5c87;
   color: white;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.9rem;
+  font-weight: 400;
   cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: serif;
+}
+
+.cart-controls button:hover {
+  transform: scale(1.1);
+}
+
+.cart-controls button:active {
+  transform: scale(0.95);
 }
 
 .cart-controls span {
   min-width: 24px;
   text-align: center;
-  font-weight: 700;
-  color: #5a2f56;
+  font-weight: 400;
+  color: #553B44;
+  font-size: 0.95rem;
+  font-family: 'Patrick Hand', cursive;
 }
 
 .quote-button {
-  padding: 14px 24px;
+  padding: 12px 24px;
   border: none;
   border-radius: 999px;
-  background: #6c4d8d;
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.25s ease, background 0.25s ease;
+   background: #ec5c87;
+  transition: all 0.3s ease;
 }
 
 .quote-button:hover {
   transform: translateY(-2px);
-  background: #563974;
+  box-shadow: 0 8px 20px rgba(223, 175, 163, 0.3);
 }
 
 @media (max-width: 900px) {
   .detail-card,
   .detail-card.reverse {
     grid-template-columns: 1fr;
+    padding: 32px;
+    gap: 24px;
   }
 
   .detail-card.reverse {
     direction: ltr;
+  }
+
+  .card-image {
+    min-height: 280px;
+  }
+
+  .card-copy h3 {
+    font-size: clamp(1.4rem, 2vw, 2rem);
+  }
+
+  .card-copy p {
+    font-size: 0.9rem;
+  }
+
+  .price-bubble {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+  }
+
+  .cart-controls button {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .cart-controls span {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .detail-card {
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .card-image {
+    min-height: 240px;
+    border-radius: 20px;
+  }
+
+  .card-copy h3 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    margin: 0 0 8px;
+  }
+
+  .card-copy p {
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+  }
+
+  .card-footer {
+    gap: 12px;
+  }
+
+  .price-bubble {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .calories-label {
+    font-size: 0.75rem;
+    padding: 5px 10px;
   }
 }
