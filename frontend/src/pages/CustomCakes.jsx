@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import customCakeRound from "./customcakeround.png";
 import customCakeSquare from "./customcakesquare.png";
@@ -16,85 +17,208 @@ import whippedCreamImg from "./whippedcream-frosting.png";
 import fondantImg from "./fondant-frosting.png";
 import semiNakedImg from "./seminaked-frosting.png";
 import dripCakeImg from "./dripcake-frosting.png";
+import {
+  fetchCustomizations,
+  getToken,
+  submitCustomCakeOrder,
+} from "../api/client";
 import "./CustomCakes.css";
 
-const occasionOptions = [
-  { label: "Birthday", icon: "🎂" },
-  { label: "Anniversary", icon: "💍" },
-  { label: "Baby Shower", icon: "👶" },
-  { label: "Graduation", icon: "🎓" },
-  { label: "Corporate Event", icon: "💼" },
-  { label: "Other", icon: "✨" },
-];
-
-const shapeOptions = [
-  { label: "Round", image: customCakeRound },
-  { label: "Square", image: customCakeSquare },
-  { label: "Heart", image: customCakeHeart },
-  { label: "Rectangle", image: customCakeRectangle },
-];
-
-const flavorOptions = [
-  { label: "Chocolate Truffle", image: chocolateTruffleImg },
-  { label: "Red Velvet", image: redVelvetImg },
-  { label: "Black Forest", image: blackForestImg },
-  { label: "Butterscotch", image: butterscotchImg },
-  { label: "Vanilla", image: vanillaImg },
-  { label: "Blueberry", image: blueberryImg },
-  { label: "Strawberry", image: strawberryImg },
-];
-
-const weightOptions = [
-  { weight: "0.5 Kg", serves: "2-4 people" },
-  { weight: "1 Kg", serves: "4-6 people" },
-  { weight: "1.5 Kg", serves: "6-8 people" },
-  { weight: "2 Kg", serves: "8-10 people" },
-  { weight: "3 Kg", serves: "10-15 people" },
-];
-
-const frostingOptions = [
-  { label: "Buttercream", image: buttercreamImg },
-  { label: "Whipped Cream", image: whippedCreamImg },
-  { label: "Fondant", image: fondantImg },
-  { label: "Semi-Naked", image: semiNakedImg },
-  { label: "Drip Cake", image: dripCakeImg },
-];
-
-const toppingOptions = [
-  { name: "Extra Chocolate", price: 100 },
-  { name: "Fresh Fruits", price: 150 },
-  { name: "Gold Foil", price: 250 },
-  { name: "Macarons", price: 200 },
-  { name: "Sprinkles", price: 50 },
-];
-
-const weightPriceMap = {
-  "0.5 Kg": 899,
-  "1 Kg": 1299,
-  "1.5 Kg": 1599,
-  "2 Kg": 1899,
-  "3 Kg": 2399,
+const occasionIcons = {
+  Birthday: "🎂",
+  Anniversary: "💍",
+  Other: "✨",
 };
 
-const toppingPriceMap = {
-  "Extra Chocolate": 120,
-  "Fresh Fruits": 100,
-  "Gold Foil": 220,
-  "Macarons": 140,
-  "Sprinkles": 60,
+const shapeImages = {
+  Round: customCakeRound,
+  Square: customCakeSquare,
+  Heart: customCakeHeart,
+  Rectangle: customCakeRectangle,
 };
+
+const flavorImages = {
+  "Chocolate Truffle": chocolateTruffleImg,
+  "Red Velvet": redVelvetImg,
+  "Black Forest": blackForestImg,
+  Butterscotch: butterscotchImg,
+  Vanilla: vanillaImg,
+  Blueberry: blueberryImg,
+  Strawberry: strawberryImg,
+};
+
+const frostingImages = {
+  Buttercream: buttercreamImg,
+  "Whipped Cream": whippedCreamImg,
+  Fondant: fondantImg,
+  "Semi-Naked": semiNakedImg,
+  "Drip Cake": dripCakeImg,
+};
+
+const weightServesMap = {
+  "0.5 Kg": "2-4 people",
+  "1 Kg": "4-6 people",
+  "1.5 Kg": "6-8 people",
+  "2 Kg": "8-10 people",
+  "3 Kg": "10-15 people",
+};
+
+const ALLOWED_OCCASIONS = ["Birthday", "Anniversary", "Other"];
+
+const defaultOccasions = [...ALLOWED_OCCASIONS];
+
+const defaultShapes = ["Round", "Square", "Heart", "Rectangle"];
+
+const defaultFlavors = [
+  "Chocolate Truffle",
+  "Red Velvet",
+  "Black Forest",
+  "Butterscotch",
+  "Vanilla",
+  "Blueberry",
+  "Strawberry",
+];
+
+const defaultWeights = [
+  { name: "0.5 Kg", price: 899 },
+  { name: "1 Kg", price: 1299 },
+  { name: "1.5 Kg", price: 1599 },
+  { name: "2 Kg", price: 1899 },
+  { name: "3 Kg", price: 2399 },
+];
+
+const defaultFrostings = [
+  "Buttercream",
+  "Whipped Cream",
+  "Fondant",
+  "Semi-Naked",
+  "Drip Cake",
+];
+
+const defaultToppings = [
+  { name: "Extra Chocolate", price: 120 },
+  { name: "Fresh Fruits", price: 100 },
+  { name: "Gold Foil", price: 220 },
+  { name: "Macarons", price: 140 },
+  { name: "Sprinkles", price: 60 },
+];
+
+function mapOptionsByType(options, type) {
+  return options
+    .filter((option) => option.type === type)
+    .map((option) => ({
+      name: option.name,
+      price: option.priceModifier || 0,
+    }));
+}
 
 function CustomCakes() {
-  const [occasion, setOccasion] = useState(occasionOptions[0].label);
-  const [shape, setShape] = useState(shapeOptions[0].label);
-  const [flavor, setFlavor] = useState(flavorOptions[0].label);
-  const [weight, setWeight] = useState(weightOptions[1].weight);
-  const [frosting, setFrosting] = useState(frostingOptions[0].label);
+  const navigate = useNavigate();
+  const [occasion, setOccasion] = useState(defaultOccasions[0]);
+  const [shape, setShape] = useState(defaultShapes[0]);
+  const [flavor, setFlavor] = useState(defaultFlavors[0]);
+  const [weight, setWeight] = useState(defaultWeights[1].name);
+  const [frosting, setFrosting] = useState(defaultFrostings[0]);
   const [toppings, setToppings] = useState([]);
   const [message, setMessage] = useState("Happy Birthday Mom ❤️");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [referenceImage, setReferenceImage] = useState(null);
+  const [occasionOptions, setOccasionOptions] = useState(defaultOccasions);
+  const [shapeOptions, setShapeOptions] = useState(defaultShapes);
+  const [flavorOptions, setFlavorOptions] = useState(defaultFlavors);
+  const [weightOptions, setWeightOptions] = useState(defaultWeights);
+  const [frostingOptions, setFrostingOptions] = useState(defaultFrostings);
+  const [toppingOptions, setToppingOptions] = useState(defaultToppings);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState({ type: "", message: "" });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadCustomizations() {
+      try {
+        const options = await fetchCustomizations();
+        if (!active || !Array.isArray(options) || options.length === 0) {
+          return;
+        }
+
+        const occasions = mapOptionsByType(options, "occasion")
+          .map((item) => item.name)
+          .filter((name) => ALLOWED_OCCASIONS.includes(name));
+        const shapes = mapOptionsByType(options, "shape").map((item) => item.name);
+        const flavors = mapOptionsByType(options, "flavor").map((item) => item.name);
+        const weights = mapOptionsByType(options, "weight");
+        const frostings = mapOptionsByType(options, "frosting").map((item) => item.name);
+        const toppingsFromApi = mapOptionsByType(options, "topping");
+
+        if (occasions.length) {
+          setOccasionOptions(occasions);
+          setOccasion(occasions[0]);
+        }
+        if (shapes.length) {
+          setShapeOptions(shapes);
+          setShape(shapes[0]);
+        }
+        if (flavors.length) {
+          setFlavorOptions(flavors);
+          setFlavor(flavors[0]);
+        }
+        if (weights.length) {
+          setWeightOptions(weights);
+          setWeight(weights[0].name);
+        }
+        if (frostings.length) {
+          setFrostingOptions(frostings);
+          setFrosting(frostings[0]);
+        }
+        if (toppingsFromApi.length) {
+          setToppingOptions(toppingsFromApi);
+        }
+      } catch {
+        if (active) {
+          setFeedback({
+            type: "error",
+            message: "Could not load customization options. Using default menu.",
+          });
+        }
+      } finally {
+        if (active) {
+          setLoadingOptions(false);
+        }
+      }
+    }
+
+    loadCustomizations();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const weightPriceMap = useMemo(
+    () =>
+      weightOptions.reduce((map, option) => {
+        map[option.name] = option.price;
+        return map;
+      }, {}),
+    [weightOptions]
+  );
+
+  const toppingPriceMap = useMemo(
+    () =>
+      toppingOptions.reduce((map, option) => {
+        map[option.name] = option.price;
+        return map;
+      }, {}),
+    [toppingOptions]
+  );
+
+  const estimatedPrice =
+    (weightPriceMap[weight] || 1299) +
+    toppings.reduce((sum, topping) => sum + (toppingPriceMap[topping] || 0), 0);
 
   const handleToppingToggle = (option) => {
     setToppings((current) =>
@@ -111,9 +235,89 @@ function CustomCakes() {
     }
   };
 
-  const estimatedPrice =
-    (weightPriceMap[weight] || 1299) +
-    toppings.reduce((sum, topping) => sum + (toppingPriceMap[topping] || 0), 0);
+  const buildOrderPayload = () => ({
+    occasion,
+    shape,
+    flavor,
+    weight,
+    frosting,
+    toppings,
+    message,
+    deliveryDate,
+    deliveryTime,
+    deliveryAddress,
+    hasReferenceImage: Boolean(referenceImage),
+  });
+
+  const validateOrder = () => {
+    if (!deliveryAddress.trim()) {
+      return "Please enter a delivery address.";
+    }
+    if (!deliveryDate) {
+      return "Please choose a delivery date.";
+    }
+    if (!deliveryTime) {
+      return "Please choose a delivery time.";
+    }
+    return "";
+  };
+
+  const handleRequestCustomCake = async () => {
+    const validationError = validateOrder();
+    if (validationError) {
+      setFeedback({ type: "error", message: validationError });
+      return;
+    }
+
+    if (!getToken()) {
+      setFeedback({ type: "error", message: "Please log in to request a custom cake." });
+      navigate("/login");
+      return;
+    }
+
+    setSubmitting(true);
+    setFeedback({ type: "", message: "" });
+
+    try {
+      await submitCustomCakeOrder(buildOrderPayload());
+      setFeedback({
+        type: "success",
+        message: "Custom cake request submitted successfully.",
+      });
+      navigate("/orders");
+    } catch (error) {
+      setFeedback({
+        type: "error",
+        message: error.message || "Unable to submit your custom cake request.",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleAddToCart = () => {
+    const validationError = validateOrder();
+    if (validationError) {
+      setFeedback({ type: "error", message: validationError });
+      return;
+    }
+
+    const cartItem = {
+      id: Date.now(),
+      ...buildOrderPayload(),
+      estimatedPrice,
+      createdAt: new Date().toISOString(),
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem("bakehub_cart") || "[]");
+    localStorage.setItem("bakehub_cart", JSON.stringify([...existingCart, cartItem]));
+    window.dispatchEvent(new Event("cart-updated"));
+
+    setFeedback({
+      type: "success",
+      message: "Custom cake added to cart.",
+    });
+  };
 
   return (
     <div className="custom-cakes-page">
@@ -131,6 +335,14 @@ function CustomCakes() {
 
       <main className="builder-grid">
         <section className="builder-panel">
+          {loadingOptions && (
+            <p className="builder-status">Loading customization options...</p>
+          )}
+
+          {feedback.message && (
+            <p className={`builder-status ${feedback.type}`}>{feedback.message}</p>
+          )}
+
           <article className="step-card">
             <div className="step-head">
               <span>Step 1</span>
@@ -139,13 +351,13 @@ function CustomCakes() {
             <div className="option-grid occasions">
               {occasionOptions.map((option) => (
                 <button
-                  key={option.label}
-                  className={`option-pill ${occasion === option.label ? "selected" : ""}`}
+                  key={option}
+                  className={`option-pill ${occasion === option ? "selected" : ""}`}
                   type="button"
-                  onClick={() => setOccasion(option.label)}
+                  onClick={() => setOccasion(option)}
                 >
-                  <span className="option-icon">{option.icon}</span>
-                  {option.label}
+                  <span className="option-icon">{occasionIcons[option] || "✨"}</span>
+                  {option}
                 </button>
               ))}
             </div>
@@ -159,13 +371,16 @@ function CustomCakes() {
             <div className="shape-grid">
               {shapeOptions.map((shapeOption) => (
                 <button
-                  key={shapeOption.label}
-                  className={`shape-card ${shape === shapeOption.label ? "selected" : ""}`}
+                  key={shapeOption}
+                  className={`shape-card ${shape === shapeOption ? "selected" : ""}`}
                   type="button"
-                  onClick={() => setShape(shapeOption.label)}
+                  onClick={() => setShape(shapeOption)}
                 >
-                  <img src={shapeOption.image} alt={`${shapeOption.label} cake`} />
-                  <span>{shapeOption.label}</span>
+                  <img
+                    src={shapeImages[shapeOption]}
+                    alt={`${shapeOption} cake`}
+                  />
+                  <span>{shapeOption}</span>
                 </button>
               ))}
             </div>
@@ -179,13 +394,13 @@ function CustomCakes() {
             <div className="flavor-grid">
               {flavorOptions.map((flavorOption) => (
                 <button
-                  key={flavorOption.label}
-                  className={`flavor-card ${flavor === flavorOption.label ? "selected" : ""}`}
+                  key={flavorOption}
+                  className={`flavor-card ${flavor === flavorOption ? "selected" : ""}`}
                   type="button"
-                  onClick={() => setFlavor(flavorOption.label)}
+                  onClick={() => setFlavor(flavorOption)}
                 >
-                  <img src={flavorOption.image} alt={flavorOption.label} />
-                  <span>{flavorOption.label}</span>
+                  <img src={flavorImages[flavorOption]} alt={flavorOption} />
+                  <span>{flavorOption}</span>
                 </button>
               ))}
             </div>
@@ -199,13 +414,13 @@ function CustomCakes() {
             <div className="option-grid weights">
               {weightOptions.map((weightOption) => (
                 <button
-                  key={weightOption.weight}
-                  className={`option-pill ${weight === weightOption.weight ? "selected" : ""}`}
+                  key={weightOption.name}
+                  className={`option-pill ${weight === weightOption.name ? "selected" : ""}`}
                   type="button"
-                  onClick={() => setWeight(weightOption.weight)}
+                  onClick={() => setWeight(weightOption.name)}
                 >
-                  <div>{weightOption.weight}</div>
-                  <small>{weightOption.serves}</small>
+                  <div>{weightOption.name}</div>
+                  <small>{weightServesMap[weightOption.name] || "Custom size"}</small>
                 </button>
               ))}
             </div>
@@ -219,13 +434,13 @@ function CustomCakes() {
             <div className="frosting-grid">
               {frostingOptions.map((option) => (
                 <button
-                  key={option.label}
-                  className={`style-card ${frosting === option.label ? "selected" : ""}`}
+                  key={option}
+                  className={`style-card ${frosting === option ? "selected" : ""}`}
                   type="button"
-                  onClick={() => setFrosting(option.label)}
+                  onClick={() => setFrosting(option)}
                 >
-                  <img src={option.image} alt={option.label} />
-                  <span>{option.label}</span>
+                  <img src={frostingImages[option]} alt={option} />
+                  <span>{option}</span>
                 </button>
               ))}
             </div>
@@ -274,49 +489,58 @@ function CustomCakes() {
               <h2>Additional Toppings</h2>
             </div>
             <div className="toppings-grid">
-  {toppingOptions.map((option) => (
-    <label
-      key={option.name}
-      className={`topping-pill ${
-        toppings.includes(option.name) ? "selected" : ""
-      }`}
-    >
-      <input
-        type="checkbox"
-        checked={toppings.includes(option.name)}
-        onChange={() => handleToppingToggle(option.name)}
-      />
-
-      <span>
-        {option.name} (+₹{option.price})
-      </span>
-    </label>
-  ))}
-</div>
+              {toppingOptions.map((option) => (
+                <label
+                  key={option.name}
+                  className={`topping-pill ${
+                    toppings.includes(option.name) ? "selected" : ""
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={toppings.includes(option.name)}
+                    onChange={() => handleToppingToggle(option.name)}
+                  />
+                  <span>
+                    {option.name} (+₹{option.price})
+                  </span>
+                </label>
+              ))}
+            </div>
           </article>
 
           <article className="step-card compact-card">
             <div className="step-head">
               <span>Step 9</span>
-              <h2>Delivery Date & Time</h2>
+              <h2>Delivery Details</h2>
             </div>
-            <div className="date-time-grid">
+            <div className="delivery-details">
               <label>
-                Delivery Date
-                <input
-                  type="date"
-                  value={deliveryDate}
-                  onChange={(event) => setDeliveryDate(event.target.value)}
+                Delivery Address
+                <textarea
+                  value={deliveryAddress}
+                  onChange={(event) => setDeliveryAddress(event.target.value)}
+                  placeholder="House number, street, city, pin code"
                 />
               </label>
-              <label>
-                Delivery Time
-                <input
-                  type="time"
-                  value={deliveryTime}
-                  onChange={(event) => setDeliveryTime(event.target.value)}
-                />
-              </label>
+              <div className="date-time-grid">
+                <label>
+                  Delivery Date
+                  <input
+                    type="date"
+                    value={deliveryDate}
+                    onChange={(event) => setDeliveryDate(event.target.value)}
+                  />
+                </label>
+                <label>
+                  Delivery Time
+                  <input
+                    type="time"
+                    value={deliveryTime}
+                    onChange={(event) => setDeliveryTime(event.target.value)}
+                  />
+                </label>
+              </div>
             </div>
           </article>
         </section>
@@ -346,6 +570,10 @@ function CustomCakes() {
                 <strong>{frosting}</strong>
               </div>
               <div>
+                <span>Toppings</span>
+                <strong>{toppings.length ? toppings.join(", ") : "None"}</strong>
+              </div>
+              <div>
                 <span>Message</span>
                 <strong>{message || "Your message here"}</strong>
               </div>
@@ -355,7 +583,15 @@ function CustomCakes() {
               </div>
               <div>
                 <span>Delivery</span>
-                <strong>{deliveryDate && deliveryTime ? `${deliveryDate} · ${deliveryTime}` : "Select date and time"}</strong>
+                <strong>
+                  {deliveryDate && deliveryTime
+                    ? `${deliveryDate} · ${deliveryTime}`
+                    : "Select date and time"}
+                </strong>
+              </div>
+              <div>
+                <span>Address</span>
+                <strong>{deliveryAddress || "Add delivery address"}</strong>
               </div>
             </div>
 
@@ -365,8 +601,17 @@ function CustomCakes() {
             </div>
 
             <div className="preview-buttons">
-              <button type="button" className="primary-btn">Request Custom Cake</button>
-              <button type="button" className="secondary-btn">Add To Cart</button>
+              <button
+                type="button"
+                className="primary-btn"
+                onClick={handleRequestCustomCake}
+                disabled={submitting}
+              >
+                {submitting ? "Submitting..." : "Request Custom Cake"}
+              </button>
+              <button type="button" className="secondary-btn" onClick={handleAddToCart}>
+                Add To Cart
+              </button>
             </div>
           </div>
         </aside>

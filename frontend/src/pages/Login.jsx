@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link ,useNavigate} from "react-router-dom";
+import { storeAuthSession } from "../api/client";
 import "./Signup.css";
 
 import {
@@ -69,6 +70,7 @@ function Login() {
       }
 
       localStorage.setItem("bakehub_token", data.token);
+      storeAuthSession(data);
       setSuccess("Login successful.");
 
 

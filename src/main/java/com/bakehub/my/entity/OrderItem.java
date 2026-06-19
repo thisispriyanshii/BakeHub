@@ -1,5 +1,6 @@
 package com.bakehub.my.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 
     @ManyToOne
@@ -22,5 +24,6 @@ public class OrderItem {
     private Integer quantity;
     private Double itemPrice;
     private Double lineTotal;
+    @Column(columnDefinition = "TEXT")
     private String customizationDetails;
 }

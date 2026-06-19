@@ -1,0 +1,118 @@
+.detail-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 60px rgba(38, 29, 38, 0.08);
+  border-radius: 28px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.detail-card.reverse {
+  direction: rtl;
+}
+
+.detail-card.reverse .card-copy,
+.detail-card.reverse .card-image {
+  direction: ltr;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-copy {
+  padding: 40px 36px;
+}
+
+.card-copy h3 {
+  font-family: "Patrick Hand", cursive;
+  font-size: clamp(2rem, 2.5vw, 2.8rem);
+  color: #442b2b;
+  margin: 0 0 18px;
+}
+
+.card-copy p {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: #4a3a3d;
+  margin: 0 0 24px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.price-bubble {
+  display: inline-block;
+  padding: 14px 22px;
+  border-radius: 999px;
+  background: #fde6ff;
+  color: #5a2f56;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.cart-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: #f7ecff;
+  border-radius: 999px;
+  padding: 8px 12px;
+}
+
+.cart-controls button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #6c4d8d;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cart-controls span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+  color: #5a2f56;
+}
+
+.quote-button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 999px;
+  background: #6c4d8d;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+
+.quote-button:hover {
+  transform: translateY(-2px);
+  background: #563974;
+}
+
+@media (max-width: 900px) {
+  .detail-card,
+  .detail-card.reverse {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-card.reverse {
+    direction: ltr;
+  }
+}

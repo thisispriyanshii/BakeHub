@@ -517,6 +517,57 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.builder-status {
+  margin: 0;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: #fff8f2;
+  border: 1px solid rgba(217, 171, 124, 0.25);
+  color: #6d5548;
+}
+
+.builder-status.error {
+  background: #fff1f1;
+  border-color: rgba(198, 92, 92, 0.25);
+  color: #8f3f3f;
+}
+
+.builder-status.success {
+  background: #f2fff6;
+  border-color: rgba(88, 160, 108, 0.25);
+  color: #356944;
+}
+
+.delivery-details {
+  display: grid;
+  gap: 16px;
+}
+
+.delivery-details label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #5f4a41;
+}
+
+.delivery-details textarea {
+  width: 100%;
+  min-height: 96px;
+  border-radius: 18px;
+  border: 1px solid rgba(206, 161, 117, 0.3);
+  padding: 14px 16px;
+  font-size: 0.95rem;
+  font-family: 'Lora', serif;
+  color: #3d2920;
+  resize: vertical;
+  background: #fff;
+}
+
+.primary-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 1120px) {
   .builder-grid {
     grid-template-columns: 1fr;
