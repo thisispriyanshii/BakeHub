@@ -72,10 +72,15 @@ function Login() {
       storeAuthSession(data);
       setSuccess("Login successful.");
 
+      const role = data.role || (localStorage.getItem("bakehub_user") ? JSON.parse(localStorage.getItem("bakehub_user")).role : null);
 
-     setTimeout(() => {
-       navigate("/home"); // or "/dashboard"
-     }, 1000);
+      setTimeout(() => {
+        if (role === "ADMIN") {
+          navigate("/admin");
+        } else {
+          navigate("/home");
+        }
+      }, 700);
 
     setEmail("");
           setPassword("");

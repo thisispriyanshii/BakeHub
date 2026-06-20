@@ -179,3 +179,70 @@ export function fetchMyOrders() {
 export function fetchCurrentUser() {
   return apiRequest("/api/auth/me");
 }
+
+// Admin API helpers
+export function adminFetchProducts() {
+  return apiRequest("/admin/products");
+}
+
+export function adminCreateProduct(payload) {
+  return apiRequest("/admin/products", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function adminUpdateProduct(id, payload) {
+  return apiRequest(`/admin/products/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function adminDeleteProduct(id) {
+  return apiRequest(`/admin/products/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function adminUploadImage(file) {
+  const form = new FormData();
+  form.append("file", file);
+  const token = getToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const resp = await fetch(`${API_BASE_URL}/admin/products/upload`, {
+    method: "POST",
+    headers,
+    body: form,
+  });
+
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.message || data.error || "Upload failed");
+  return data;
+}
+
+export function adminFetchOrders() {
+  return apiRequest("/admin/orders");
+}
+
+export function adminFetchOrder(id) {
+  return apiRequest(`/admin/orders/${id}`);
+}
+
+export function adminUpdateOrderStatus(id, status) {
+  return apiRequest(`/admin/orders/${id}/status?status=${status}`, {
+    method: "PUT",
+  });
+}
+
+export function adminFetchCategories() {
+  return apiRequest("/admin/categories");
+}
+
+export function adminCreateCoupon(payload) {
+  return apiRequest(`/admin/coupons`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}

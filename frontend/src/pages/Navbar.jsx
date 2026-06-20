@@ -13,7 +13,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-import { getToken, fetchMyOrders } from "../api/client";
+import { getToken, fetchMyOrders, getStoredUser } from "../api/client";
 import "./Navbar.css";
 
 function Navbar() {
@@ -23,6 +23,7 @@ function Navbar() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [notifCount, setNotifCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const loadCart = () => {
     try {
@@ -56,6 +57,17 @@ function Navbar() {
         setNotifCount(count);
       } catch(e) { setNotifCount(0); }
     }).catch(()=>{});
+  }, []);
+
+  useEffect(() => {
+    const user = getStoredUser();
+    setIsAdmin(user?.role === 'ADMIN');
+    const onStorage = () => {
+      const u = getStoredUser();
+      setIsAdmin(u?.role === 'ADMIN');
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, []);
 
   useEffect(() => {
@@ -138,6 +150,12 @@ function Navbar() {
             <FaClipboardList />
             Orders
           </Link>
+          {isAdmin && (
+            <Link to="/admin" className="nav-item">
+              <FaClipboardList />
+              Admin
+            </Link>
+          )}
         </div>
 
         <div className="right-icons">

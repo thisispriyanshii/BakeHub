@@ -193,4 +193,9 @@ public class OrderService {
         order.setStatus(status);
         return orderRepository.save(order);
     }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+    }
 }

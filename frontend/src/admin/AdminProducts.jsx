@@ -1,0 +1,116 @@
+import React, { useEffect, useState } from "react";
+import { adminFetchProducts, adminCreateProduct, adminDeleteProduct, adminUpdateProduct, adminUploadImage, adminFetchCategories } from "../api/client";
+
+function AdminProducts() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'' });
+  const [categories, setCategories] = useState([]);
+
+  const load = () => {
+    setLoading(true);
+    adminFetchProducts().then(list=>setProducts(list)).catch(()=>{}).finally(()=>setLoading(false));
+  };
+
+  useEffect(()=>{ load(); adminFetchCategories().then(c=>setCategories(c)).catch(()=>{}); }, []);
+
+  const handleFile = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    try {
+      const data = await adminUploadImage(f);
+      setForm({...form, imageUrl: data.url});
+    } catch(err){ alert(err.message || 'Upload failed'); }
+  };
+
+  const handleAdd = async () => {
+    const payload = { ...form, price: Number(form.price), category: form.categoryId ? { id: form.categoryId } : null, tags: form.tags ? form.tags.split(',').map(t=>t.trim()).filter(Boolean) : [] };
+    try{
+      await adminCreateProduct(payload);
+      setShowAdd(false);
+      setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'' });
+      load();
+    }catch(e){ alert(e.message || 'Create failed'); }
+  };
+
+  const toggleStock = async (p) => {
+    try{
+      await adminUpdateProduct(p.id, { ...p, inStock: !p.inStock });
+      load();
+    }catch(e){ alert('Update failed'); }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Delete product?')) return;
+    await adminDeleteProduct(id);
+    load();
+  };
+
+  return (
+    <div>
+      <h1>Menu & Products</h1>
+      <div className="mt-12">
+        <button className="btn btn-primary" onClick={()=>setShowAdd(true)}>Add Product</button>
+      </div>
+
+      {showAdd && (
+        <div className="mt-12 admin-card">
+          <div className="mb-8">
+            <label>Name</label>
+            <input className="input" value={form.name} onChange={e=>setForm({...form, name:e.target.value})} />
+          </div>
+          <div className="mb-8">
+            <label>Description</label>
+            <textarea className="input" value={form.description} onChange={e=>setForm({...form, description:e.target.value})} />
+          </div>
+          <div className="mb-8">
+            <label>Price</label>
+            <input className="input" type="number" value={form.price} onChange={e=>setForm({...form, price:e.target.value})} />
+          </div>
+          <div className="mb-8">
+            <label>Category</label>
+            <select className="input" value={form.categoryId||''} onChange={e=>setForm({...form, categoryId: e.target.value || null})}>
+              <option value="">-- choose --</option>
+              {categories.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          <div className="mb-8">
+            <label>Image</label>
+            <input className="input" type="file" accept="image/*" onChange={handleFile} />
+            {form.imageUrl && (<div className="mt-12"><img src={form.imageUrl} style={{maxWidth:120}} alt="preview"/></div>)}
+          </div>
+          <div className="mb-8">
+            <label>Tags (comma separated)</label>
+            <input className="input" value={form.tags} onChange={e=>setForm({...form, tags:e.target.value})} />
+          </div>
+          <div style={{marginTop:8}}>
+            <button className="btn btn-primary" onClick={handleAdd}>Create</button>
+            <button className="btn btn-ghost" onClick={()=>setShowAdd(false)} style={{marginLeft:8}}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      <div className="product-grid">
+        {products.map(p=> (
+          <div key={p.id} className="product-card">
+            <img src={p.imageUrl} alt={p.name} />
+            <div className="body">
+              <h4>{p.name}</h4>
+              <p>{p.description}</p>
+              <p>₹{p.price}</p>
+              <p className="text-muted">Status: {p.inStock ? 'In Stock' : 'Out of Stock'}</p>
+            </div>
+            <div className="product-actions">
+              <button className="btn btn-ghost" onClick={()=>toggleStock(p)}>{p.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}</button>
+              <button className="btn" onClick={()=>handleDelete(p.id)}>Delete</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}
+
+export default AdminProducts;

@@ -15,6 +15,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.List;
 
@@ -56,5 +66,24 @@ public class ProductController {
 
         productService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Map<String, String>> uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "No file provided"));
+        }
+
+        String uploadDir = "uploads";
+        Files.createDirectories(Paths.get(uploadDir));
+
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path target = Paths.get(uploadDir).resolve(filename);
+        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+        String url = "/api/uploads/" + filename;
+        Map<String, String> resp = new HashMap<>();
+        resp.put("url", url);
+        return ResponseEntity.ok(resp);
     }
 }

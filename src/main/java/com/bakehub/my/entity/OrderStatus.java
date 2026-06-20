@@ -4,5 +4,7 @@ public enum OrderStatus {
     PLACED,
     PREPARING,
     READY,
-    DELIVERED
+    DISPATCHED,
+    DELIVERED,
+    COMPLETED
 }
