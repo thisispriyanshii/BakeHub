@@ -2,6 +2,7 @@ package com.bakehub.my.controller;
 
 import com.bakehub.my.dto.AuthRequest;
 import com.bakehub.my.dto.AuthResponse;
+import com.bakehub.my.dto.RefreshRequest;
 import com.bakehub.my.dto.UserProfileResponse;
 import com.bakehub.my.entity.Role;
 import com.bakehub.my.entity.User;
@@ -63,8 +64,41 @@ public class AuthController {
         }
 
         String token = jwtUtil.generateToken(user.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
         return ResponseEntity.ok(new AuthResponse(
                 token,
+                refreshToken,
+                user.getRole().name(),
+                user.getId(),
+                user.getName(),
+                user.getEmail()
+        ));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshRequest request) {
+        if (request == null || request.getRefreshToken() == null) {
+            return ResponseEntity.badRequest().body("Missing refresh token");
+        }
+
+        if (!jwtUtil.isRefreshToken(request.getRefreshToken())) {
+            return ResponseEntity.status(401).body("Invalid refresh token");
+        }
+
+        String email = jwtUtil.extractEmail(request.getRefreshToken());
+        if (email == null) {
+            return ResponseEntity.status(401).body("Expired or invalid refresh token");
+        }
+
+        String token = jwtUtil.generateToken(email);
+        String refreshToken = jwtUtil.generateRefreshToken(email);
+
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return ResponseEntity.ok(new AuthResponse(
+                token,
+                refreshToken,
                 user.getRole().name(),
                 user.getId(),
                 user.getName(),

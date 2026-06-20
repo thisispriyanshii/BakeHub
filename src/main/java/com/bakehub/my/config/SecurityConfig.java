@@ -29,7 +29,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/refresh").permitAll()
                         .requestMatchers("/customizations/**").permitAll()
                         .requestMatchers("/products", "/products/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")

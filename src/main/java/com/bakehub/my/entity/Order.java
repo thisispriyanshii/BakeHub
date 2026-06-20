@@ -3,6 +3,7 @@ package com.bakehub.my.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +21,14 @@ public class Order {
     private User user;
 
     private String deliveryAddress;
-    private Double latitude;
-    private Double longitude;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PLACED;
 
     private Double totalPrice;
+    private String occasion;
+    private LocalDate deliveryDate;
+    private String couponCode;
 
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();

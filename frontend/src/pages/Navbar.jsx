@@ -13,7 +13,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-import { getToken } from "../api/client";
+import { getToken, fetchMyOrders } from "../api/client";
 import "./Navbar.css";
 
 function Navbar() {
@@ -22,6 +22,7 @@ function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState({ type: "", message: "" });
+  const [notifCount, setNotifCount] = useState(0);
 
   const loadCart = () => {
     try {
@@ -40,6 +41,21 @@ function Navbar() {
       window.removeEventListener("cart-updated", loadCart);
       window.removeEventListener("storage", loadCart);
     };
+  }, []);
+
+  useEffect(() => {
+    if (!getToken()) return;
+    fetchMyOrders().then(list => {
+      try {
+        const now = new Date();
+        const twoDays = new Date(now.getFullYear(), now.getMonth(), now.getDate()+2);
+        const count = (list || []).filter(o => o.deliveryDate && o.occasion).filter(o => {
+          const d = new Date(o.deliveryDate);
+          return d.getFullYear()===twoDays.getFullYear() && d.getMonth()===twoDays.getMonth() && d.getDate()===twoDays.getDate();
+        }).length;
+        setNotifCount(count);
+      } catch(e) { setNotifCount(0); }
+    }).catch(()=>{});
   }, []);
 
   useEffect(() => {
@@ -125,9 +141,10 @@ function Navbar() {
         </div>
 
         <div className="right-icons">
-          <div className="icon">
+          <Link to="/celebrations" className="icon notification-icon" title="Celebrations">
             <FaBell />
-          </div>
+            {notifCount>0 && <span className="notif-badge">{notifCount}</span>}
+          </Link>
 
           <div
             className="icon cart-icon-btn"

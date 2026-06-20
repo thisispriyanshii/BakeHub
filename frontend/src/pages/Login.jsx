@@ -69,7 +69,6 @@ function Login() {
         return;
       }
 
-      localStorage.setItem("bakehub_token", data.token);
       storeAuthSession(data);
       setSuccess("Login successful.");
 

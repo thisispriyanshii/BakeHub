@@ -79,19 +79,17 @@ function Cart() {
     setFeedback({ type: "", message: "" });
 
     try {
+      const appliedCoupon = localStorage.getItem("bakehub_coupon") || null;
+
       if (menuItems.length > 0) {
         const orderPayload = {
-          userId: null,
           deliveryAddress: address.trim(),
-          latitude: null,
-          longitude: null,
           items: menuItems.map((item) => ({
-            productId: item.id,
+            productId: item.productId,
             quantity: item.quantity,
-            customizationDetails: JSON.stringify({
-              name: item.name,
-            }),
+            customizationDetails: item.customizationDetails ?? null,
           })),
+          couponCode: appliedCoupon,
         };
 
         await submitMenuOrder(orderPayload);
@@ -101,6 +99,7 @@ function Cart() {
         const customPayload = {
           ...item,
           deliveryAddress: address.trim(),
+          couponCode: localStorage.getItem("bakehub_coupon") || null,
         };
         await submitCustomCakeOrder(customPayload);
       }
@@ -171,6 +170,12 @@ function Cart() {
                 placeholder="Enter your delivery address"
               />
             </label>
+            {localStorage.getItem("bakehub_coupon") ? (
+              <div style={{marginTop:12}}>
+                <strong>Applied Coupon:</strong> {localStorage.getItem("bakehub_coupon")}
+                <button type="button" style={{marginLeft:12}} onClick={() => { localStorage.removeItem("bakehub_coupon"); window.dispatchEvent(new Event("cart-updated")); setFeedback({type:'success', message:'Coupon removed'}); }}>Remove</button>
+              </div>
+            ) : null}
             <div className="summary-row">
               <span>Total</span>
               <strong>₹{totalPrice.toFixed(2)}</strong>

@@ -328,7 +328,7 @@ function CustomCakes() {
           <span className="eyebrow">Design Your Dream Cake</span>
           <h1>Mix, Match & Make It Yours</h1>
           <p>
-            Choose flavors, size, frosting, theme and message. We'll bake it exactly the way
+            Choose flavors, size, frosting, and message. We'll bake it exactly the way
             you imagine.
           </p>
         </div>

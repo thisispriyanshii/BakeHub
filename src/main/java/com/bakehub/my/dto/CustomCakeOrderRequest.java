@@ -13,9 +13,8 @@ public class CustomCakeOrderRequest {
     private String deliveryDate;
     private String deliveryTime;
     private String deliveryAddress;
-    private Double latitude;
-    private Double longitude;
     private Boolean hasReferenceImage;
+    private String couponCode;
 
     public String getOccasion() {
         return occasion;
@@ -97,27 +96,19 @@ public class CustomCakeOrderRequest {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
     public Boolean getHasReferenceImage() {
         return hasReferenceImage;
     }
 
     public void setHasReferenceImage(Boolean hasReferenceImage) {
         this.hasReferenceImage = hasReferenceImage;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 }

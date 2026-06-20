@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,6 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setDeliveryAddress(request.getDeliveryAddress());
-        order.setLatitude(request.getLatitude());
-        order.setLongitude(request.getLongitude());
 
         List<OrderItem> items = request.getItems().stream().map(this::createOrderItem).collect(Collectors.toList());
         double total = items.stream().mapToDouble(OrderItem::getLineTotal).sum();
@@ -56,6 +55,7 @@ public class OrderService {
         items.forEach(item -> item.setOrder(order));
         order.setItems(items);
         order.setTotalPrice(total);
+        order.setCouponCode(request.getCouponCode());
 
         return orderRepository.save(order);
     }
@@ -88,8 +88,10 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setDeliveryAddress(request.getDeliveryAddress());
-        order.setLatitude(request.getLatitude());
-        order.setLongitude(request.getLongitude());
+        order.setOccasion(request.getOccasion());
+        order.setDeliveryDate(LocalDate.parse(request.getDeliveryDate()));
+        // support coupon code if provided
+        try { order.setCouponCode(request.getCouponCode()); } catch (Exception ignored) {}
 
         OrderItem item = new OrderItem();
         item.setProduct(product);
@@ -101,7 +103,7 @@ public class OrderService {
 
         order.setItems(List.of(item));
         order.setTotalPrice(calculatedPrice);
-
+        order.setCouponCode(request.getCouponCode());
         return orderRepository.save(order);
     }
 
@@ -121,8 +123,6 @@ public class OrderService {
         Order order = new Order();
         order.setUser(user);
         order.setDeliveryAddress(request.getDeliveryAddress());
-        order.setLatitude(request.getLatitude());
-        order.setLongitude(request.getLongitude());
 
         List<OrderItem> items = request.getItems().stream()
                 .map(this::createOrderItem)
@@ -133,6 +133,7 @@ public class OrderService {
 
         order.setItems(items);
         order.setTotalPrice(total);
+        order.setCouponCode(request.getCouponCode());
 
         return orderRepository.save(order);
     }

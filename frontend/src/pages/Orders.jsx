@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
-import { fetchMyOrders, getToken } from "../api/client";
+import { fetchMyOrders, getToken, fetchReviewsByOrder, submitReview } from "../api/client";
 import "./Orders.css";
 
 function parseCustomizationDetails(rawDetails) {
@@ -20,6 +20,9 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [reviewed, setReviewed] = useState({});
+
+  const [reviewDrafts, setReviewDrafts] = useState({});
 
   useEffect(() => {
     if (!getToken()) {
@@ -30,7 +33,17 @@ function Orders() {
 
     fetchMyOrders()
       .then((data) => {
-        setOrders(Array.isArray(data) ? data : []);
+        const list = Array.isArray(data) ? data : [];
+        setOrders(list);
+
+        // check delivered orders for existing reviews
+        list.filter(o => o.status === 'DELIVERED').forEach(o => {
+          fetchReviewsByOrder(o.id).then(res => {
+            if (Array.isArray(res) && res.length > 0) {
+              setReviewed(prev => ({ ...prev, [o.id]: true }));
+            }
+          }).catch(() => {});
+        });
       })
       .catch((fetchError) => {
         setError(fetchError.message || "Unable to load orders.");
@@ -130,6 +143,29 @@ function Orders() {
                   <span>{order.deliveryAddress}</span>
                   <strong>₹{Number(order.totalPrice).toFixed(2)}</strong>
                 </div>
+                {order.status === 'DELIVERED' && !reviewed[order.id] && (
+                  <div style={{padding:16, borderTop:'1px solid #eee'}}>
+                    <p>Please leave a short review (two sentences) and rating:</p>
+                    <textarea rows={2} value={reviewDrafts[order.id]?.text || ''} onChange={(e)=> setReviewDrafts(prev=> ({...prev, [order.id]: {...prev[order.id], text: e.target.value}}))} placeholder="Write two short sentences about your experience" />
+                    <div style={{marginTop:8}}>
+                      <label>Rating: </label>
+                      <select value={reviewDrafts[order.id]?.rating || 5} onChange={(e)=> setReviewDrafts(prev=> ({...prev, [order.id]: {...prev[order.id], rating: Number(e.target.value)}}))}>
+                        {[5,4,3,2,1].map(r=> <option key={r} value={r}>{r}</option>)}
+                      </select>
+                      <button style={{marginLeft:12}} onClick={async ()=>{
+                        const draft = reviewDrafts[order.id] || {};
+                        const text = (draft.text||'').trim();
+                        const sentences = text.split('.').map(s=>s.trim()).filter(Boolean);
+                        if (sentences.length < 2) { alert('Please provide two short sentences.'); return; }
+                        try {
+                          await submitReview({ orderId: order.id, rating: draft.rating || 5, text });
+                          setReviewed(prev => ({...prev, [order.id]: true}));
+                          alert('Thanks for your review!');
+                        } catch(err) { alert(err.message || 'Failed to submit review'); }
+                      }}>Submit Review</button>
+                    </div>
+                  </div>
+                )}
               </article>
             );
           })}

@@ -6,8 +6,7 @@ public class CreateOrderRequest {
     private Long userId;
     private List<OrderItemRequest> items;
     private String deliveryAddress;
-    private Double latitude;
-    private Double longitude;
+    private String couponCode;
 
     public Long getUserId() {
         return userId;
@@ -33,19 +32,11 @@ public class CreateOrderRequest {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public Double getLatitude() {
-        return latitude;
+    public String getCouponCode() {
+        return couponCode;
     }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 }
