@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
@@ -40,6 +41,32 @@ function Navbar() {
       window.removeEventListener("storage", loadCart);
     };
   }, []);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const scrollBarGap = window.innerWidth - html.clientWidth;
+
+    if (isDrawerOpen) {
+      html.style.overflow = "hidden";
+      document.body.style.overflow = "hidden";
+      if (scrollBarGap > 0) {
+        html.style.paddingRight = `${scrollBarGap}px`;
+        document.body.style.paddingRight = `${scrollBarGap}px`;
+      }
+    } else {
+      html.style.overflow = "";
+      document.body.style.overflow = "";
+      html.style.paddingRight = "";
+      document.body.style.paddingRight = "";
+    }
+
+    return () => {
+      html.style.overflow = "";
+      document.body.style.overflow = "";
+      html.style.paddingRight = "";
+      document.body.style.paddingRight = "";
+    };
+  }, [isDrawerOpen]);
 
   const handleRemoveItem = (id) => {
     const updated = cartItems.filter((item) => item.id !== id);
@@ -116,84 +143,85 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Cart Drawer */}
-      {isDrawerOpen && (
-        <div className="cart-drawer-backdrop" onClick={() => setIsDrawerOpen(false)}>
-          <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
-            <div className="cart-drawer-header">
-              <h2>Your Cart ({cartItems.length})</h2>
-              <button
-                className="close-drawer-btn"
-                onClick={() => setIsDrawerOpen(false)}
-              >
-                <FaTimes />
-              </button>
-            </div>
-
-            <div className="cart-drawer-body">
-              {feedback.message && (
-                <div className={`cart-feedback ${feedback.type}`}>
-                  {feedback.message}
-                </div>
-              )}
-
-              {cartItems.length === 0 ? (
-                <div className="cart-empty-state">
-                  <span className="empty-cart-icon">🛒</span>
-                  <p>Your cart is empty.</p>
-                  <Link
-                    to="/custom-cakes"
-                    className="shop-now-btn"
-                    onClick={() => setIsDrawerOpen(false)}
-                  >
-                    Design a Custom Cake
-                  </Link>
-                </div>
-              ) : (
-                <div className="cart-items-list">
-                  {cartItems.map((item) => (
-                    <div key={item.id} className="cart-item-card">
-                              <div className="cart-item-info">
-                                <h3>{item.name || item.flavor}</h3>
-                                <div className="cart-item-details">
-                                  {item.category?.name && <p><span>Category:</span> {item.category.name}</p>}
-                                  {item.quantity != null && <p><span>Qty:</span> {item.quantity}</p>}
-                                  {item.price != null && <p><span>Unit:</span> ₹{item.price.toFixed(2)}</p>}
-                                  <p><span>Total:</span> ₹{(item.estimatedPrice ?? item.price * item.quantity).toFixed(2)}</p>
-                                </div>
-                              </div>
-                          <div className="cart-item-actions">
-                            <button
-                              className="remove-cart-item-btn"
-                              onClick={() => handleRemoveItem(item.id)}
-                              title="Remove item"
-                            >
-                              <FaTrash />
-                            </button>
-                          </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {cartItems.length > 0 && (
-              <div className="cart-drawer-footer">
-                <div className="cart-total-section">
-                  <span>Total Est. Price</span>
-                  <strong>₹{totalCartPrice}</strong>
-                </div>
+      {isDrawerOpen &&
+        createPortal(
+          <div className="cart-drawer-backdrop" onClick={() => setIsDrawerOpen(false)}>
+            <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+              <div className="cart-drawer-header">
+                <h2>Your Cart ({cartItems.length})</h2>
                 <button
-                  className="cart-checkout-btn"
-                  onClick={handleCheckout}
+                  className="close-drawer-btn"
+                  onClick={() => setIsDrawerOpen(false)}
                 >
-                  View Cart
+                  <FaTimes />
                 </button>
               </div>
-            )}
-          </div>
-        </div>
-      )}
+
+              <div className="cart-drawer-body">
+                {feedback.message && (
+                  <div className={`cart-feedback ${feedback.type}`}>
+                    {feedback.message}
+                  </div>
+                )}
+
+                {cartItems.length === 0 ? (
+                  <div className="cart-empty-state">
+                    <span className="empty-cart-icon">🛒</span>
+                    <p>Your cart is empty.</p>
+                    <Link
+                      to="/custom-cakes"
+                      className="shop-now-btn"
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      Design a Custom Cake
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="cart-items-list">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="cart-item-card">
+                        <div className="cart-item-info">
+                          <h3>{item.name || item.flavor}</h3>
+                          <div className="cart-item-details">
+                            {item.category?.name && <p><span>Category:</span> {item.category.name}</p>}
+                            {item.quantity != null && <p><span>Qty:</span> {item.quantity}</p>}
+                            {item.price != null && <p><span>Unit:</span> ₹{item.price.toFixed(2)}</p>}
+                            <p><span>Total:</span> ₹{(item.estimatedPrice ?? item.price * item.quantity).toFixed(2)}</p>
+                          </div>
+                        </div>
+                        <div className="cart-item-actions">
+                          <button
+                            className="remove-cart-item-btn"
+                            onClick={() => handleRemoveItem(item.id)}
+                            title="Remove item"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {cartItems.length > 0 && (
+                <div className="cart-drawer-footer">
+                  <div className="cart-total-section">
+                    <span>Total Est. Price</span>
+                    <strong>₹{totalCartPrice}</strong>
+                  </div>
+                  <button
+                    className="cart-checkout-btn"
+                    onClick={handleCheckout}
+                  >
+                    View Cart
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body
+        )}
     </>
   );
 }

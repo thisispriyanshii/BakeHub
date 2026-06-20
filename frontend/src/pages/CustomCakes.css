@@ -5,7 +5,7 @@
   background: #faf7f5;
   color: #121212;
 }
-.custom-cakes-page > * {
+.custom-cakes-page > *:not(.navbar) {
   position: relative;
   z-index: 1;
 }

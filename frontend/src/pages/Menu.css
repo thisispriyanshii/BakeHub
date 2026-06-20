@@ -4,7 +4,7 @@
   color: #121212;
 }
 
-.menu-page > * {
+.menu-page > *:not(.navbar) {
   position: relative;
   z-index: 1;
 }
