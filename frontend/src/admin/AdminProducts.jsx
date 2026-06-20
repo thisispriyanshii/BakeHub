@@ -5,7 +5,9 @@ function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'' });
+  const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [categories, setCategories] = useState([]);
 
   const load = () => {
@@ -25,13 +27,25 @@ function AdminProducts() {
   };
 
   const handleAdd = async () => {
-    const payload = { ...form, price: Number(form.price), category: form.categoryId ? { id: form.categoryId } : null, tags: form.tags ? form.tags.split(',').map(t=>t.trim()).filter(Boolean) : [] };
+    const payload = { 
+      ...form, 
+      price: Number(form.price),
+      calories: form.calories !== undefined ? Number(form.calories) : undefined,
+      category: form.categoryId ? { id: form.categoryId } : null,
+      tags: form.tags ? form.tags.split(',').map(t=>t.trim()).filter(Boolean) : []
+    };
     try{
-      await adminCreateProduct(payload);
+      if (isEditing && editingId) {
+        await adminUpdateProduct(editingId, payload);
+      } else {
+        await adminCreateProduct(payload);
+      }
       setShowAdd(false);
-      setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'' });
+      setIsEditing(false);
+      setEditingId(null);
+      setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 });
       load();
-    }catch(e){ alert(e.message || 'Create failed'); }
+    }catch(e){ alert(e.message || (isEditing ? 'Update failed' : 'Create failed')); }
   };
 
   const toggleStock = async (p) => {
@@ -69,6 +83,10 @@ function AdminProducts() {
             <input className="input" type="number" value={form.price} onChange={e=>setForm({...form, price:e.target.value})} />
           </div>
           <div className="mb-8">
+            <label>Calories</label>
+            <input className="input" type="number" value={form.calories} onChange={e=>setForm({...form, calories: e.target.value})} />
+          </div>
+          <div className="mb-8">
             <label>Category</label>
             <select className="input" value={form.categoryId||''} onChange={e=>setForm({...form, categoryId: e.target.value || null})}>
               <option value="">-- choose --</option>
@@ -85,8 +103,8 @@ function AdminProducts() {
             <input className="input" value={form.tags} onChange={e=>setForm({...form, tags:e.target.value})} />
           </div>
           <div style={{marginTop:8}}>
-            <button className="btn btn-primary" onClick={handleAdd}>Create</button>
-            <button className="btn btn-ghost" onClick={()=>setShowAdd(false)} style={{marginLeft:8}}>Cancel</button>
+            <button className="btn btn-primary" onClick={handleAdd}>{isEditing ? 'Save Changes' : 'Create'}</button>
+            <button className="btn btn-ghost" onClick={()=>{ setShowAdd(false); setIsEditing(false); setEditingId(null); setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 }); }} style={{marginLeft:8}}>Cancel</button>
           </div>
         </div>
       )}
@@ -101,10 +119,26 @@ function AdminProducts() {
               <p>₹{p.price}</p>
               <p className="text-muted">Status: {p.inStock ? 'In Stock' : 'Out of Stock'}</p>
             </div>
-            <div className="product-actions">
-              <button className="btn btn-ghost" onClick={()=>toggleStock(p)}>{p.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}</button>
-              <button className="btn" onClick={()=>handleDelete(p.id)}>Delete</button>
-            </div>
+              <div className="product-actions">
+                <button className="btn btn-ghost" onClick={()=>toggleStock(p)}>{p.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}</button>
+                <button className="btn btn-ghost" onClick={()=>{
+                  // open form for editing
+                  setShowAdd(true);
+                  setIsEditing(true);
+                  setEditingId(p.id);
+                  setForm({
+                    name: p.name || '',
+                    description: p.description || '',
+                    price: p.price || 0,
+                    categoryId: p.category?.id || p.categoryId || null,
+                    imageUrl: p.imageUrl || '',
+                    inStock: p.inStock === undefined ? true : p.inStock,
+                    tags: p.tags ? p.tags.join(',') : '',
+                    calories: p.calories || 0
+                  });
+                }} style={{marginLeft:6}}>Modify</button>
+                <button className="btn" onClick={()=>handleDelete(p.id)} style={{marginLeft:6}}>Delete</button>
+              </div>
           </div>
         ))}
       </div>

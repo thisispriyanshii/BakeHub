@@ -1,26 +1,32 @@
 .celebrations-page {
   min-height: 100vh;
-  background: #fff9f7;
+  background: linear-gradient(180deg, #FCE8E6 0%, #FFF5F4 100%);
   color: #30211f;
 }
 
 .celebrations-hero {
   padding: 56px 24px 24px;
   text-align: center;
-  background: linear-gradient(180deg, #fff5f2 0%, #fff9f7 100%);
+  font-family: serif;
+  font-style: italic;
+  background: linear-gradient(180deg, #FCE8E6 0%, #FFF5F4 100%);
 }
 
 .celebrations-hero h1 {
   font-size: clamp(2.6rem, 4vw, 4rem);
   margin-bottom: 12px;
+  font-family: serif;
+  font-style: italic;
 }
 
 .celebrations-hero p {
   max-width: 720px;
   margin: 0 auto;
-  color: #6a5650;
+  color: #000000;
   line-height: 1.7;
   font-size: 1.05rem;
+  font-family: serif;
+  font-style: italic;
 }
 
 .celebration-grid,
@@ -88,7 +94,7 @@
 
 .offers-section {
   padding: 4px 0 48px;
-  background: #fff9f7;
+  background: transparent;
 }
 
 .offers-section h2,

@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600&display=swap');
 
+/* Add serif fallback for admin/auth headings */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
 *{
     margin:0;
     padding:0;
@@ -42,6 +45,8 @@ body{
     letter-spacing:10px;
     font-size:1.1rem;
     margin-bottom:10px;
+    font-family: 'Merriweather', serif;
+    font-style: italic;
 }
 
 .logo{
@@ -87,6 +92,8 @@ body{
     color:white;
     text-align:center;
     margin-bottom:15px;
+    font-family: 'Merriweather', serif;
+    font-style: italic;
 }
 
 .signup-card input{
@@ -116,21 +123,23 @@ body{
 
     border-radius:14px;
 
-    background:#ff8fb3;
+    background:linear-gradient(180deg,#ff9fc6,#ff6f9a);
 
-    color:black;
+    color:#140b10;
 
-    font-weight:600;
+    font-weight:700;
 
     font-size:1.1rem;
 
     cursor:pointer;
 
-    transition:0.3s;
+    transition:0.18s;
+    font-family: 'Merriweather', serif;
 }
 
 .signup-card button:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(255,105,160,0.12);
 }
 
 .login-link{
