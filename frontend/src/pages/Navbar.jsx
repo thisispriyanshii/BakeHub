@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
+import { Link,NavLink, useNavigate } from "react-router-dom";
 
 import {
   FaHome,
@@ -143,33 +143,31 @@ function Navbar() {
           <p className="tagline">CELEBRATIONS. BAKED FRESH.</p>
         </div>
 
-        <div className="nav-links">
-          <Link to="/home" className="nav-item">
+              <div className="nav-links">
+          <NavLink to="/home" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaHome />
             Home
-          </Link>
-          <Link to="/menu" className="nav-item">
+          </NavLink>
+
+          <NavLink to="/menu" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaClipboardList />
             Menu
-          </Link>
-          <Link to="/custom-cakes" className="nav-item">
+          </NavLink>
+
+          <NavLink to="/custom-cakes" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaBirthdayCake />
             Custom Cakes
-          </Link>
-          <Link to="/celebrations" className="nav-item">
+          </NavLink>
+
+          <NavLink to="/celebrations" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaGift />
             Celebrations
-          </Link>
-          <Link to="/orders" className="nav-item">
+          </NavLink>
+
+          <NavLink to="/orders" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaClipboardList />
             Orders
-          </Link>
-          {isAdmin && (
-            <Link to="/admin" className="nav-item">
-              <FaClipboardList />
-              Admin
-            </Link>
-          )}
+          </NavLink>
         </div>
 
         <div className="right-icons">

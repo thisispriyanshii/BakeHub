@@ -63,10 +63,24 @@
   border-bottom: 3px solid transparent;
 }
 
+.nav-item.active{
+   color: #ec5c87;
+
+}
+
 .nav-item:hover {
   color: #ec5c87;
 
-  border-bottom: 3px solid #ec5c87;
+
+}
+
+.nav-item.active {
+   color: #ec5c87; /* your theme color */
+  font-weight: 600;
+}
+
+.nav-item:hover {
+    color: #ec5c87;
 }
 
 .right-icons {
