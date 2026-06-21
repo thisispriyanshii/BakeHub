@@ -208,7 +208,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   height: auto;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   border-radius: 16px;
   background: #f5ede4;
@@ -311,7 +311,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   height: auto;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
   background: #f5ede4;
   display: block;

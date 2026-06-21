@@ -128,7 +128,7 @@ function AdminOrders() {
                 <td><span className={`status-badge status-${formatStatus(o.status).toLowerCase()}`}>{formatStatus(o.status)}</span></td>
                 <td>₹{o.totalPrice}</td>
                 <td style={{display:'flex', gap:8}}>
-                  <button className="btn btn-primary" onClick={()=>advance(o)}>{getNextStatus(formatStatus(o.status)) ? `Advance to ${getNextStatus(formatStatus(o.status))}` : 'Done'}</button>
+                  <button className="btn btn-primary" onClick={()=>advance(o)}>{getNextStatus(formatStatus(o.status)) ? `${getNextStatus(formatStatus(o.status))}` : 'Done'}</button>
                   <button className="btn btn-ghost" onClick={async ()=>{
                     setLoadingDetails(true);
                     try{

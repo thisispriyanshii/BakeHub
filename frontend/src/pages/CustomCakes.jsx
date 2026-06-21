@@ -122,8 +122,6 @@ function CustomCakes() {
   const [toppings, setToppings] = useState([]);
   const [message, setMessage] = useState("Happy Birthday Mom ❤️");
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [deliveryTime, setDeliveryTime] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [referenceImage, setReferenceImage] = useState(null);
   const [occasionOptions, setOccasionOptions] = useState(defaultOccasions);
   const [shapeOptions, setShapeOptions] = useState(defaultShapes);
@@ -244,20 +242,12 @@ function CustomCakes() {
     toppings,
     message,
     deliveryDate,
-    deliveryTime,
-    deliveryAddress,
     hasReferenceImage: Boolean(referenceImage),
   });
 
   const validateOrder = (requireDelivery = true) => {
-    if (requireDelivery && !deliveryAddress.trim()) {
-      return "Please enter a delivery address.";
-    }
-    if (!deliveryDate) {
+    if (requireDelivery && !deliveryDate) {
       return "Please choose a delivery date.";
-    }
-    if (!deliveryTime) {
-      return "Please choose a delivery time.";
     }
     return "";
   };
@@ -528,23 +518,7 @@ function CustomCakes() {
                     onChange={(event) => setDeliveryDate(event.target.value)}
                   />
                 </label>
-                <label>
-                  Delivery Time
-                  <input
-                    type="time"
-                    value={deliveryTime}
-                    onChange={(event) => setDeliveryTime(event.target.value)}
-                  />
-                </label>
               </div>
-              <label className="address-field">
-                Delivery Address
-                <textarea
-                  value={deliveryAddress}
-                  onChange={(event) => setDeliveryAddress(event.target.value)}
-                  placeholder="Enter full delivery address"
-                />
-              </label>
             </div>
           </article>
         </section>
@@ -587,15 +561,7 @@ function CustomCakes() {
               </div>
               <div>
                 <span>Delivery</span>
-                <strong>
-                  {deliveryDate && deliveryTime
-                    ? `${deliveryDate} · ${deliveryTime}`
-                    : "Select date and time"}
-                </strong>
-              </div>
-              <div>
-                <span>Address</span>
-                <strong>{deliveryAddress || "Add delivery address"}</strong>
+                <strong>{deliveryDate || "Select delivery date"}</strong>
               </div>
             </div>
 
