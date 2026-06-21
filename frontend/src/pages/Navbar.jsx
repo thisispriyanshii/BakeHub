@@ -153,7 +153,10 @@ function Navbar() {
 
   return (
     <>
-      <nav className="navbar">
+      <nav
+        className="navbar"
+        style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 99999 }}
+      >
         <div className="logo-section">
           <h1 className="logo">
             Bake<span>Hub</span>
