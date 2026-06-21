@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AlertBanner from "../components/AlertBanner";
 import { adminFetchProducts, adminCreateProduct, adminDeleteProduct, adminUpdateProduct, adminUploadImage, adminFetchCategories } from "../api/client";
 
 function AdminProducts() {
@@ -9,6 +10,8 @@ function AdminProducts() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [alert, setAlert] = useState({ type: '', title: '', message: '' });
+  const [deleteCandidate, setDeleteCandidate] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -23,7 +26,7 @@ function AdminProducts() {
     try {
       const data = await adminUploadImage(f);
       setForm({...form, imageUrl: data.url});
-    } catch(err){ alert(err.message || 'Upload failed'); }
+    } catch(err){ setAlert({ type: 'danger', title: 'Error!', message: err.message || 'Upload failed' }); }
   };
 
   const handleAdd = async () => {
@@ -45,35 +48,67 @@ function AdminProducts() {
       setEditingId(null);
       setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 });
       load();
-    }catch(e){ alert(e.message || (isEditing ? 'Update failed' : 'Create failed')); }
+    }catch(e){ setAlert({ type: 'danger', title: 'Error!', message: e.message || (isEditing ? 'Update failed' : 'Create failed') }); }
   };
 
   const toggleStock = async (p) => {
     try{
       await adminUpdateProduct(p.id, { ...p, inStock: !p.inStock });
       load();
-    }catch(e){ alert('Update failed'); }
+    }catch(e){ setAlert({ type: 'warning', title: 'Warning!', message: 'Update failed' }); }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Delete product?')) return;
+    setDeleteCandidate(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteCandidate) return;
     try {
-      await adminDeleteProduct(id);
+      await adminDeleteProduct(deleteCandidate);
+      setAlert({ type: 'success', title: 'Deleted!', message: 'Product has been removed.' });
     } catch (err) {
       const msg = err?.message || 'Delete failed';
-      alert(msg);
+      setAlert({ type: 'danger', title: 'Error!', message: msg });
     } finally {
-      // refresh list regardless so UI reflects actual state
+      setDeleteCandidate(null);
       load();
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteCandidate(null);
   };
 
   return (
     <div>
       <h1>Menu & Products</h1>
+      <AlertBanner
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ type: '', title: '', message: '' })}
+      />
       <div className="mt-12">
         <button className="btn btn-primary" onClick={()=>setShowAdd(true)}>Add Product</button>
       </div>
+
+      <AlertBanner
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ type: '', title: '', message: '' })}
+      />
+
+      {deleteCandidate && (
+        <div className="alert alert-warning alert-dismissible fade show" role="alert">
+          <strong>Warning!</strong> Are you sure you want to delete this product?
+          <div className="mt-3">
+            <button className="btn btn-sm btn-danger me-2" onClick={confirmDelete}>Yes, delete</button>
+            <button className="btn btn-sm btn-secondary" onClick={cancelDelete}>Cancel</button>
+          </div>
+        </div>
+      )}
 
       {showAdd && (
         <div className="mt-12 admin-card">

@@ -89,6 +89,13 @@
   gap: 20px;
 
   align-items: center;
+
+
+
+}
+
+.cart-icon-btn {
+  margin-right: 25px;
 }
 
 .icon {
@@ -141,7 +148,7 @@
   justify-content: center;
 }
 
-.profile-wrap{ position:relative }
+.profile-wrap{ position:relative;right:30px }
 .profile{ cursor:pointer; font-weight:800 }
 .profile-menu{ position:absolute; right:0; top:48px; background:#fff; border-radius:8px; box-shadow:0 8px 30px rgba(0,0,0,0.12); display:flex; flex-direction:column; min-width:140px; overflow:hidden }
 .profile-menu-item{ background:none; border:none; padding:10px 12px; text-align:left; cursor:pointer; font-weight:600; color:#333 }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import AlertBanner from "../components/AlertBanner";
 import { adminCreateCoupon, fetchCoupons } from "../api/client";
 
 function AdminCoupons() {
@@ -12,6 +13,7 @@ function AdminCoupons() {
   });
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState({ type: "", title: "", message: "" });
 
   const loadCoupons = async () => {
     setLoading(true);
@@ -42,20 +44,20 @@ function AdminCoupons() {
     };
 
     if (!payload.code) {
-      return alert("Coupon code is required.");
+      return setAlert({ type: "warning", title: "Warning!", message: "Coupon code is required." });
     }
 
     if (payload.type === "PERCENTAGE" && payload.discountPercent <= 0) {
-      return alert("Enter a discount percentage greater than 0.");
+      return setAlert({ type: "warning", title: "Warning!", message: "Enter a discount percentage greater than 0." });
     }
 
     if (payload.type === "FLAT" && payload.flatAmount <= 0) {
-      return alert("Enter a flat discount amount greater than 0.");
+      return setAlert({ type: "warning", title: "Warning!", message: "Enter a flat discount amount greater than 0." });
     }
 
     try {
       await adminCreateCoupon(payload);
-      alert("Coupon created");
+      setAlert({ type: "success", title: "Success!", message: "Coupon created." });
       setForm({
         code: "",
         type: "PERCENTAGE",
@@ -67,13 +69,19 @@ function AdminCoupons() {
       await loadCoupons();
     } catch (e) {
       console.error(e);
-      alert("Coupon creation failed. Check console for details.");
+      setAlert({ type: "danger", title: "Error!", message: "Coupon creation failed. Check console for details." });
     }
   };
 
   return (
     <div>
       <h1>Coupons & Promotions</h1>
+      <AlertBanner
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ type: "", title: "", message: "" })}
+      />
       <div className="mt-12 admin-card">
         <div className="mb-8">
           <label>Code</label>

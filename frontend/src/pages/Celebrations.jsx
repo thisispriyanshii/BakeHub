@@ -1,11 +1,13 @@
 import Navbar from "./Navbar";
 import "./Celebrations.css";
 import { useEffect, useState } from "react";
+import AlertBanner from "../components/AlertBanner";
 import { fetchReviews, fetchCoupons } from "../api/client";
 
 function Celebrations() {
   const [reviews, setReviews] = useState([]);
   const [coupons, setCoupons] = useState([]);
+  const [alert, setAlert] = useState({ type: "", title: "", message: "" });
 
   useEffect(() => {
     fetchReviews(3.5, 10).then(setReviews).catch(() => setReviews([]));
@@ -15,7 +17,7 @@ function Celebrations() {
   const applyCoupon = (code) => {
     localStorage.setItem("bakehub_coupon", code);
     window.dispatchEvent(new Event("cart-updated"));
-    alert(`Coupon ${code} applied. It will show up in your cart.`);
+    setAlert({ type: "success", title: "Success!", message: `Coupon ${code} applied. It will show up in your cart.` });
   };
 
   return (
@@ -26,6 +28,13 @@ function Celebrations() {
         <h1>Reviews & Offers</h1>
         <p>Top reviews from customers and available coupon codes for celebrations.</p>
       </section>
+
+      <AlertBanner
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ type: "", title: "", message: "" })}
+      />
 
       <section className="celebrations-list">
         <h2>Customer Reviews (Top rated)</h2>
