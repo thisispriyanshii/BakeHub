@@ -21,12 +21,15 @@
 .cart-hero h1 {
   margin: 0 0 14px;
   font-size: clamp(2.4rem, 3vw, 3.6rem);
+  font-family: serif;
+  font-style: italic;
   color: #3d2540;
 }
 
 .cart-hero p {
   color: #5f4b63;
   max-width: 760px;
+  font-family: serif;
   line-height: 1.8;
 }
 
@@ -40,7 +43,7 @@
 }
 
 .cart-left {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffe4ec;
   border-radius: 28px;
   padding: 28px;
   box-shadow: 0 20px 60px rgba(102, 50, 119, 0.08);
@@ -59,7 +62,7 @@
   padding: 18px;
   border: 1px solid #f0e5f5;
   border-radius: 20px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .cart-item-image img {
@@ -89,6 +92,20 @@
   cursor: pointer;
 }
 
+.coupon-remove-text {
+  border: none;
+  background: transparent;
+  color: #f590d0;
+  padding: 0;
+  margin-left: 2px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.coupon-remove-text:hover {
+  text-decoration: underline;
+}
+
 .cart-aside {
   position: sticky;
   top: 24px;
@@ -96,8 +113,8 @@
 }
 
 .cart-summary {
-  background: #5e3f7b;
-  color: white;
+  background: #ffe4ec;
+  color: #121212;
   padding: 32px;
   border-radius: 28px;
   display: grid;
@@ -112,7 +129,7 @@
 .cart-summary label {
   display: grid;
   gap: 10px;
-  color: #dcd1e8;
+  color: #121212;
   font-size: 0.95rem;
 }
 
@@ -123,15 +140,15 @@
   border-radius: 20px;
   border: none;
   resize: vertical;
-  background: rgba(255, 255, 255, 0.16);
-  color: white;
+  background: rgba(255, 255, 255, 0.4);
+  color: #121212;
 }
 
 .summary-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #f4edf9;
+  color: #121212;
 }
 
 .checkout-btn {
@@ -139,11 +156,19 @@
   padding: 16px 20px;
   border: none;
   border-radius: 999px;
-  background: #ff7f99;
+  background: #ec5c87;
   color: white;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  box-shadow: 0 10px 20px rgba(236, 92, 135, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.checkout-btn:hover:not(:disabled) {
+  background: #d84570;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(216, 69, 112, 0.25);
 }
 
 .cart-feedback {
