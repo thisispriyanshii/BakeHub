@@ -49,6 +49,10 @@ export function clearAuthSession() {
   localStorage.removeItem("bakehub_user");
 }
 
+export function signOut() {
+  clearAuthSession();
+}
+
 async function refreshAuthToken() {
   const refreshToken = getRefreshToken();
   if (!refreshToken) {

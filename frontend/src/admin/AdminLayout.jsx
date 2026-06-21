@@ -1,11 +1,22 @@
-import React from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "../pages/Home.css";
 import "../pages/Navbar.css";
 import "./admin.css";
 import ErrorBoundary from "./ErrorBoundary";
+import { getStoredUser, clearAuthSession } from "../api/client";
 
 function AdminLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const user = getStoredUser();
+  const initial = (user && user.name) ? user.name.charAt(0).toUpperCase() : "A";
+
+  const handleSignOut = () => {
+    clearAuthSession();
+    navigate('/login');
+  };
+
   return (
     <div className="admin-root">
       <header className="admin-header">
@@ -22,6 +33,17 @@ function AdminLayout() {
             <li><NavLink to="/admin/coupons">Coupons</NavLink></li>
           </ul>
         </nav>
+
+        <div className="admin-actions">
+          <div className="admin-user-wrap">
+            <button className="admin-user-pill" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Account">{initial}</button>
+            {menuOpen && (
+              <div className="admin-user-menu">
+                <button className="btn btn-ghost" onClick={handleSignOut}>Log out</button>
+              </div>
+            )}
+          </div>
+        </div>
       </header>
 
       <main className="admin-main">
