@@ -255,7 +255,6 @@ function Navbar() {
                           <h3>{item.name || item.flavor}</h3>
                           <div className="cart-item-details">
                             {item.category?.name && <p><span>Category:</span> {item.category.name}</p>}
-                            {item.price != null && <p><span>Unit:</span> ₹{Number(item.price).toFixed(2)}</p>}
                             <p><span>Total:</span> ₹{((Number(item.price) || 0) * (Number(item.quantity) || 0)).toFixed(2)}</p>
                           </div>
                         </div>

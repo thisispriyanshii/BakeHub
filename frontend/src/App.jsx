@@ -7,6 +7,7 @@ import Menu from "./pages/Menu";
 import CustomCakes from "./pages/CustomCakes";
 import Celebrations from "./pages/Celebrations";
 import Orders from "./pages/Orders";
+import About from "./pages/About";
 import AdminLayout from "./admin/AdminLayout";
 import AdminDashboard from "./admin/AdminDashboard";
 import AdminProducts from "./admin/AdminProducts";
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
         
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />

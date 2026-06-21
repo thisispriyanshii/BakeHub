@@ -47,7 +47,7 @@ function Home() {
 
           {/* Card 1: Brownies */}
           <div className="col-12 col-sm-6 col-md-4 col-lg-2">
-            <Link to="/brownies" className="card category-card">
+            <Link to="/menu?category=brownies" className="card category-card">
               <div className="card-img-container">
                 <img src={brownies} className="card-img-top" alt="Brownies" />
               </div>
@@ -60,7 +60,7 @@ function Home() {
 
           {/* Card 2: Cupcakes */}
           <div className="col-12 col-sm-6 col-md-4 col-lg-2">
-            <Link to="/cupcakes" className="card category-card">
+            <Link to="/menu?category=cupcakes" className="card category-card">
               <div className="card-img-container">
                 <img src={cupcakes} className="card-img-top" alt="Cupcakes" />
               </div>
@@ -73,7 +73,7 @@ function Home() {
 
           {/* Card 3: Cookies */}
           <div className="col-12 col-sm-6 col-md-4 col-lg-2">
-            <Link to="/cookies" className="card category-card">
+            <Link to="/menu?category=cookies" className="card category-card">
               <div className="card-img-container">
                 <img src={cookies} className="card-img-top" alt="Cookies" />
               </div>
@@ -86,7 +86,7 @@ function Home() {
 
           {/* Card 4: Dessert Boxes */}
           <div className="col-12 col-sm-6 col-md-4 col-lg-2">
-            <Link to="/dessert-boxes" className="card category-card">
+            <Link to="/menu?category=dessert%20boxes" className="card category-card">
               <div className="card-img-container">
                 <img src={dessertbox} className="card-img-top" alt="Dessert Boxes" />
               </div>
@@ -99,7 +99,7 @@ function Home() {
 
           {/* Card 5: Hampers */}
           <div className="col-12 col-sm-6 col-md-4 col-lg-2">
-            <Link to="/hampers" className="card category-card">
+            <Link to="/menu?category=hampers" className="card category-card">
               <div className="card-img-container">
                 <img src={hampers} className="card-img-top" alt="Hampers" />
               </div>
@@ -132,8 +132,8 @@ function Home() {
            <div className="banner3-overlay">
              <div className="banner3-content">
                <h2>Never Miss a Celebration</h2>
-               <p>Add important dates and we'll remind you ahead of time so you're always ready to celebrate the special people in your life.</p>
-               <Link to="/celebrations" className="btn btn-primary">Manage Celebrations</Link>
+               <p>From birthdays and anniversaries to life's little milestones, BakeHub is here to make every celebration sweeter.</p>
+               
              </div>
            </div>
        </section>

@@ -1,0 +1,395 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Lora:wght@400;500;600&display=swap');
+
+.about-page {
+  min-height: 100vh;
+  background: #faf7f5;
+  color: #121212;
+  padding-top: 85px;
+}
+
+/* Hero Section */
+.about-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FCE8E6 0%, #FFF5F4 100%);
+  padding: 80px 24px;
+  text-align: center;
+  border-bottom: 2px solid rgba(236, 92, 135, 0.1);
+}
+
+.about-hero {
+  background: linear-gradient(135deg, #FCE8E6 0%, #FFF5F4 100%);
+  padding: 80px 24px;
+  text-align: center;
+  border-bottom: 2px solid rgba(236, 92, 135, 0.1);
+}
+
+.about-hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-hero-content h1 {
+  font-family: serif;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #3d2540;
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+
+.about-subtitle {
+  font-family: serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #8b5a8f;
+  margin: 0;
+  font-weight: 400;
+}
+
+.about-hero-content h1 {
+  font-family: serif;
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #3d2540;
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+
+.about-subtitle {
+  font-family: serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #8b5a8f;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Story Section */
+.story-section {
+  padding: 60px 24px;
+  background: #faf7f5;
+}
+
+.story-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.story-card {
+  background: #ffe4ec;
+  border-radius: 28px;
+  padding: 48px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(236, 92, 135, 0.08);
+}
+
+.story-icon {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.story-card h2 {
+  font-family: serif;
+  font-size: 2.4rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #3d2540;
+  margin: 0 0 20px;
+  letter-spacing: 0.02em;
+}
+
+.story-card p {
+  font-family: serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: #5f4b63;
+  line-height: 1.8;
+  margin: 0 0 16px;
+  font-weight: 400;
+}
+
+.story-card p:last-child {
+  margin-bottom: 0;
+}
+
+/* Why Section */
+.why-section {
+  padding: 80px 24px;
+  background: #fbf5ff;
+}
+
+.why-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-family: serif;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #3d2540;
+  text-align: center;
+  margin: 0 0 50px;
+  letter-spacing: 0.02em;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.benefit-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(102, 50, 119, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.benefit-card:hover {
+  transform: translateY(-4px);
+  border-color: #ec5c87;
+  box-shadow: 0 12px 40px rgba(236, 92, 135, 0.15);
+}
+
+.benefit-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.benefit-card h3 {
+  font-family: serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+  font-style: italic;
+  color: #3d2540;
+  margin: 0 0 12px;
+  letter-spacing: 0.01em;
+}
+
+.benefit-card p {
+  font-family: serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #736075;
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Difference Section */
+.difference-section {
+  padding: 80px 24px;
+  background: #faf7f5;
+}
+
+.difference-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.difference-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.difference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.difference-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: #3d2540;
+  font-weight: 500;
+}
+
+.checkmark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #ffe4ec;
+  color: #ec5c87;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.difference-message {
+  background: linear-gradient(135deg, #ffe4ec 0%, #fff0f5 100%);
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 10px 35px rgba(236, 92, 135, 0.12);
+}
+
+.made-with-care {
+  font-family: serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  font-style: italic;
+  color: #3d2540;
+  margin-bottom: 12px;
+  letter-spacing: 0.02em;
+}
+
+.difference-message p {
+  font-family: serif;
+  font-size: 1rem;
+  font-style: italic;
+  color: #8b5a8f;
+  margin: 0;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* CTA Section */
+.about-cta {
+  background: linear-gradient(135deg, #FCE8E6 0%, #FFF5F4 100%);
+  padding: 60px 24px;
+  text-align: center;
+  border-top: 2px solid rgba(236, 92, 135, 0.1);
+}
+
+.cta-content h2 {
+  font-family: serif;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 400;
+  font-style: italic;
+  color: #3d2540;
+  margin: 0 0 12px;
+  letter-spacing: 0.02em;
+}
+
+.cta-content p {
+  font-family: serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: #8b5a8f;
+  margin: 0 0 28px;
+  font-weight: 400;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: #ec5c87;
+  color: white;
+  padding: 14px 36px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-family: serif;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(236, 92, 135, 0.2);
+}
+
+.cta-btn:hover {
+  background: #d84570;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(236, 92, 135, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .about-page {
+    padding-top: 85px;
+  }
+
+  .story-card {
+    padding: 32px 20px;
+  }
+
+  .story-card h2 {
+    font-size: 1.8rem;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .difference-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .about-hero {
+    padding: 60px 20px;
+  }
+
+  .why-section {
+    padding: 60px 20px;
+  }
+
+  .difference-section {
+    padding: 60px 20px;
+  }
+
+  .about-cta {
+    padding: 50px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .about-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .story-card {
+    padding: 24px 16px;
+  }
+
+  .story-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .story-card p {
+    font-size: 0.9rem;
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+
+  .benefit-card {
+    padding: 24px 16px;
+  }
+
+  .benefit-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .difference-message {
+    padding: 28px 20px;
+  }
+
+  .made-with-care {
+    font-size: 1.5rem;
+  }
+}

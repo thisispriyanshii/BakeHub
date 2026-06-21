@@ -299,6 +299,7 @@ function CustomCakes() {
       type: "custom",
       quantity: 1,
       ...buildOrderPayload(),
+      price: estimatedPrice,
       estimatedPrice,
       createdAt: new Date().toISOString(),
     };

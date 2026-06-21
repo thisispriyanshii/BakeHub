@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import DetailCard from "../components/DetailCard";
 import { fetchProducts } from "../api/client";
@@ -24,6 +25,11 @@ function loadStoredCart() {
 }
 
 function Menu() {
+  const location = useLocation();
+  const requestedCategory = useMemo(
+    () => new URLSearchParams(location.search).get("category")?.trim() || "",
+    [location.search]
+  );
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [cart, setCart] = useState(() => loadStoredCart());
@@ -87,11 +93,24 @@ function Menu() {
     });
   }, [products]);
 
-  useEffect(() => {
-    if (categories.length && !categories.includes(activeCategory)) {
-      setActiveCategory(categories[0]);
-    }
-  }, [categories]);
+  const resolvedCategory = useMemo(() => {
+    if (!categories.length) return activeCategory;
+
+    const normalizedRequested = requestedCategory.toLowerCase();
+    const requestedMatch = categories.find(
+      (category) => category.toLowerCase() === normalizedRequested
+    );
+    if (requestedCategory && requestedMatch) return requestedMatch;
+
+    if (activeCategory === "All") return "All";
+
+    const normalizedActive = activeCategory.toLowerCase();
+    const matchingCategory = categories.find(
+      (category) => category.toLowerCase() === normalizedActive
+    );
+
+    return matchingCategory || categories[0];
+  }, [categories, activeCategory, requestedCategory]);
 
   const saveCartToStorage = (updatedCart) => {
     const existingItems = (() => {
@@ -102,22 +121,21 @@ function Menu() {
         return [];
       }
     })();
-
-    // keep only those existing custom items that don't collide with generated menu items
+    // preserve any custom items (those not present in products)
     const preservedCustomItems = existingItems.filter(
       (item) => !products.some((product) => String(product.id) === String(item.id))
-    ).filter(
-      (item) => !Object.entries(updatedCart).some(([mappedId]) => String(mappedId) === String(item.id))
     );
 
+    // Build menu-derived items only for product ids that exist in products
     const menuItems = Object.entries(updatedCart)
       .map(([id, quantityRaw]) => {
         const quantity = Math.max(1, Math.min(1000, Number(quantityRaw) || 1));
         return [id, quantity];
       })
       .filter(([, quantity]) => quantity > 0)
+      .filter(([id]) => products.some((p) => String(p.id) === String(id)))
       .map(([id, quantity]) => {
-        const product = products.find((item) => String(item.id) === String(id)) || { id, name: "Unknown", price: 0, imageUrl: "", category: null };
+        const product = products.find((item) => String(item.id) === String(id));
         return {
           id: product.id,
           productId: product.id,
@@ -130,6 +148,7 @@ function Menu() {
         };
       });
 
+    // Merge preserved custom items with the reconstructed menu items
     localStorage.setItem(CART_KEY, JSON.stringify([...preservedCustomItems, ...menuItems]));
   };
 
@@ -197,7 +216,7 @@ function Menu() {
       <nav className="category-bar">
         <button
           key="all"
-          className={`category-pill ${activeCategory === "All" ? "active" : ""}`}
+          className={`category-pill ${resolvedCategory === "All" ? "active" : ""}`}
           type="button"
           onClick={() => handleNavClick("All")}
         >
@@ -206,7 +225,7 @@ function Menu() {
         {categories.map((category) => (
           <button
             key={category}
-            className={`category-pill ${category === activeCategory ? "active" : ""}`}
+            className={`category-pill ${category === resolvedCategory ? "active" : ""}`}
             type="button"
             onClick={() => handleNavClick(category)}
           >
@@ -221,7 +240,7 @@ function Menu() {
         ) : (
           <section className="all-products">
             <div className="category-grid">
-              {(activeCategory === "All" ? products : productsByCategory[activeCategory] || []).map((product, index) => (
+              {(resolvedCategory === "All" ? products : productsByCategory[resolvedCategory] || []).map((product, index) => (
                 <DetailCard
                   key={product.id}
                   product={product}
