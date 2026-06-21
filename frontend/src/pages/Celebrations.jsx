@@ -52,7 +52,13 @@ function Celebrations() {
             coupons.map((c) => (
               <article key={c.id} className="offer-card">
                 <h3>{c.code}</h3>
-                <p>{c.discountPercent ? `${c.discountPercent}% off` : "Special offer"} • Min ₹{c.minAmount || 0}</p>
+                <p>
+                  {c.type === "FLAT"
+                    ? `Flat ₹${c.flatAmount || 0} off`
+                    : `${c.discountPercent || 0}% off`}
+                  {' '}• Min ₹{c.minAmount || 0}
+                </p>
+                <p>{c.expiresAt ? `Expires ${c.expiresAt}` : "No expiry"}</p>
                 <div className="offer-qualifier">{c.active ? 'Active' : 'Inactive'}</div>
                 <button className="btn btn-primary" style={{marginTop:12}} onClick={() => applyCoupon(c.code)}>Use Code</button>
               </article>

@@ -100,6 +100,7 @@ function Menu() {
         const product = products.find((item) => String(item.id) === String(id)) || { id, name: "Unknown", price: 0, imageUrl: "", category: null };
         return {
           id: product.id,
+          productId: product.id,
           name: product.name,
           price: product.price,
           quantity,

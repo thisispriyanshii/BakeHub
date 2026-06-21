@@ -35,6 +35,9 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private com.bakehub.my.repository.OrderItemRepository orderItemRepository;
+
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.findAll();
@@ -59,13 +62,27 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         if (!productService.existsById(id)) {
             throw new ProductNotFoundException(id);
         }
 
-        productService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        // check for referencing order items to provide a clearer error message
+        long refs = orderItemRepository.countByProduct_Id(id);
+        if (refs > 0) {
+            java.util.Map<String, String> body = new java.util.HashMap<>();
+            body.put("message", "Product cannot be deleted: referenced by " + refs + " order items");
+            return ResponseEntity.status(409).body(body);
+        }
+
+        try {
+            productService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            java.util.Map<String, String> body = new java.util.HashMap<>();
+            body.put("message", "Product cannot be deleted due to database constraints");
+            return ResponseEntity.status(409).body(body);
+        }
     }
 
     @PostMapping("/upload")

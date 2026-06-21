@@ -57,8 +57,15 @@ function AdminProducts() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete product?')) return;
-    await adminDeleteProduct(id);
-    load();
+    try {
+      await adminDeleteProduct(id);
+    } catch (err) {
+      const msg = err?.message || 'Delete failed';
+      alert(msg);
+    } finally {
+      // refresh list regardless so UI reflects actual state
+      load();
+    }
   };
 
   return (

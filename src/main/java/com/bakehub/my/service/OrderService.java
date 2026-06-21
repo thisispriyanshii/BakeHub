@@ -5,6 +5,7 @@ import com.bakehub.my.dto.CustomCakeOrderRequest;
 import com.bakehub.my.dto.OrderItemRequest;
 import com.bakehub.my.entity.*;
 import com.bakehub.my.exception.ProductNotFoundException;
+import com.bakehub.my.repository.CouponRepository;
 import com.bakehub.my.repository.OrderRepository;
 import com.bakehub.my.repository.ProductRepository;
 import com.bakehub.my.repository.UserRepository;
@@ -40,6 +41,9 @@ public class OrderService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private CouponRepository couponRepository;
+
     @Transactional
     public Order createOrder(CreateOrderRequest request) {
         User user = userRepository.findById(request.getUserId())
@@ -54,8 +58,8 @@ public class OrderService {
 
         items.forEach(item -> item.setOrder(order));
         order.setItems(items);
-        order.setTotalPrice(total);
-        order.setCouponCode(request.getCouponCode());
+        order.setTotalPrice(applyCouponDiscount(total, findValidCoupon(request.getCouponCode())));
+        order.setCouponCode(normalizeCouponCode(request.getCouponCode()));
 
         return orderRepository.save(order);
     }
@@ -102,8 +106,8 @@ public class OrderService {
         item.setOrder(order);
 
         order.setItems(List.of(item));
-        order.setTotalPrice(calculatedPrice);
-        order.setCouponCode(request.getCouponCode());
+        order.setTotalPrice(applyCouponDiscount(calculatedPrice, findValidCoupon(request.getCouponCode())));
+        order.setCouponCode(normalizeCouponCode(request.getCouponCode()));
         return orderRepository.save(order);
     }
 
@@ -132,10 +136,63 @@ public class OrderService {
         items.forEach(item -> item.setOrder(order));
 
         order.setItems(items);
-        order.setTotalPrice(total);
-        order.setCouponCode(request.getCouponCode());
+        order.setTotalPrice(applyCouponDiscount(total, findValidCoupon(request.getCouponCode())));
+        order.setCouponCode(normalizeCouponCode(request.getCouponCode()));
 
         return orderRepository.save(order);
+    }
+
+    private Coupon findValidCoupon(String couponCode) {
+        if (couponCode == null || couponCode.isBlank()) {
+            return null;
+        }
+
+        Coupon coupon = couponRepository.findByCodeAndActiveTrue(couponCode.trim()).orElse(null);
+        if (coupon == null) {
+            return null;
+        }
+
+        if (coupon.getExpiresAt() != null && LocalDate.now().isAfter(coupon.getExpiresAt())) {
+            coupon.setActive(false);
+            couponRepository.save(coupon);
+            return null;
+        }
+
+        return coupon;
+    }
+
+    private String normalizeCouponCode(String couponCode) {
+        Coupon coupon = findValidCoupon(couponCode);
+        return coupon == null ? null : coupon.getCode();
+    }
+
+    private double applyCouponDiscount(double total, Coupon coupon) {
+        if (coupon == null || total <= 0) {
+            return total;
+        }
+
+        if (coupon.getExpiresAt() != null && LocalDate.now().isAfter(coupon.getExpiresAt())) {
+            return total;
+        }
+
+        double minAmount = coupon.getMinAmount() == null ? 0 : coupon.getMinAmount();
+        if (total < minAmount) {
+            return total;
+        }
+
+        String type = coupon.getType() == null ? "PERCENTAGE" : coupon.getType();
+        double discount = 0;
+
+        if ("FLAT".equalsIgnoreCase(type)) {
+            discount = coupon.getFlatAmount() == null ? 0 : coupon.getFlatAmount();
+        } else {
+            double discountPercent = coupon.getDiscountPercent() == null ? 0 : coupon.getDiscountPercent();
+            if (discountPercent > 0) {
+                discount = total * (discountPercent / 100.0);
+            }
+        }
+
+        return Math.max(0, total - discount);
     }
 
     private String buildCustomizationDetails(CustomCakeOrderRequest request, double calculatedPrice) {
@@ -160,15 +217,23 @@ public class OrderService {
     }
 
     private OrderItem createOrderItem(OrderItemRequest itemRequest) {
+        if (itemRequest == null || itemRequest.getProductId() == null) {
+            throw new IllegalArgumentException("Order item productId must not be null");
+        }
+
+        int quantity = itemRequest.getQuantity() == null || itemRequest.getQuantity() < 1
+                ? 1
+                : itemRequest.getQuantity();
+
         Product product = productRepository.findById(itemRequest.getProductId())
                 .orElseThrow(() -> new ProductNotFoundException(itemRequest.getProductId()));
 
         OrderItem item = new OrderItem();
         item.setProduct(product);
-        item.setQuantity(itemRequest.getQuantity());
+        item.setQuantity(quantity);
         item.setItemPrice(product.getPrice());
         item.setCustomizationDetails(itemRequest.getCustomizationDetails());
-        item.setLineTotal(product.getPrice() * itemRequest.getQuantity());
+        item.setLineTotal(product.getPrice() * quantity);
 
         return item;
     }

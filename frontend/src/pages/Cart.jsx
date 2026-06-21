@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import { submitMenuOrder, submitCustomCakeOrder, getToken } from "../api/client";
+import { fetchCoupons, submitMenuOrder, submitCustomCakeOrder, getToken } from "../api/client";
 import "./Cart.css";
 
 const CART_KEY = "bakehub_cart";
@@ -12,6 +12,7 @@ function parseStoredCart() {
     if (!Array.isArray(raw)) return [];
     return raw.map((item) => ({
       ...item,
+      productId: item.productId || item.id,
       quantity: Number(item.quantity) || 1,
       estimatedPrice: Number(item.estimatedPrice) || Number(item.price) * (Number(item.quantity) || 1),
       type: item.type || (item.price != null ? "menu" : "custom"),
@@ -27,21 +28,50 @@ function Cart() {
   const [address, setAddress] = useState("");
   const [feedback, setFeedback] = useState({ type: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [couponCode, setCouponCode] = useState(() => localStorage.getItem("bakehub_coupon") || "");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   const totalPrice = useMemo(
     () => cartItems.reduce((sum, item) => sum + (item.estimatedPrice || 0), 0),
     [cartItems]
   );
 
+  const loadCoupons = async () => {
+    setCouponLoading(true);
+    try {
+      const coupons = await fetchCoupons();
+      setAvailableCoupons(coupons);
+      const code = localStorage.getItem("bakehub_coupon") || "";
+      setCouponCode(code);
+      setAppliedCoupon(coupons.find((coupon) => coupon.code === code) || null);
+    } catch (error) {
+      console.error("Failed to load coupons", error);
+      setAvailableCoupons([]);
+      setAppliedCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const handleCartUpdated = () => setCartItems(parseStoredCart());
+    const handleCartUpdated = () => {
+      setCartItems(parseStoredCart());
+      const code = localStorage.getItem("bakehub_coupon") || "";
+      setCouponCode(code);
+      setAppliedCoupon(availableCoupons.find((coupon) => coupon.code === code) || null);
+    };
+
     window.addEventListener("cart-updated", handleCartUpdated);
     window.addEventListener("storage", handleCartUpdated);
+    loadCoupons();
+
     return () => {
       window.removeEventListener("cart-updated", handleCartUpdated);
       window.removeEventListener("storage", handleCartUpdated);
     };
-  }, []);
+  }, [availableCoupons]);
 
   const handleRemove = (id) => {
     const nextItems = cartItems.filter((item) => item.id !== id);
@@ -49,6 +79,25 @@ function Cart() {
     window.dispatchEvent(new Event("cart-updated"));
     setCartItems(nextItems);
   };
+
+  const couponDiscount = useMemo(() => {
+    if (!appliedCoupon || totalPrice <= 0) return 0;
+    const minAmount = Number(appliedCoupon.minAmount) || 0;
+    if (totalPrice < minAmount) return 0;
+
+    const type = appliedCoupon.type || "PERCENTAGE";
+    if (type === "FLAT") {
+      return Math.min(Number(appliedCoupon.flatAmount) || 0, totalPrice);
+    }
+
+    const discountPercent = Number(appliedCoupon.discountPercent) || 0;
+    if (discountPercent <= 0) return 0;
+    return totalPrice * (discountPercent / 100);
+  }, [appliedCoupon, totalPrice]);
+
+  const discountedTotal = useMemo(() => {
+    return Math.max(0, totalPrice - couponDiscount);
+  }, [totalPrice, couponDiscount]);
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) {
@@ -85,7 +134,7 @@ function Cart() {
         const orderPayload = {
           deliveryAddress: address.trim(),
           items: menuItems.map((item) => ({
-            productId: item.productId,
+            productId: item.productId || item.id,
             quantity: item.quantity,
             customizationDetails: item.customizationDetails ?? null,
           })),
@@ -170,16 +219,57 @@ function Cart() {
                 placeholder="Enter your delivery address"
               />
             </label>
-            {localStorage.getItem("bakehub_coupon") ? (
-              <div style={{marginTop:12}}>
-                <strong>Applied Coupon:</strong> {localStorage.getItem("bakehub_coupon")}
-                <button type="button" style={{marginLeft:12}} onClick={() => { localStorage.removeItem("bakehub_coupon"); window.dispatchEvent(new Event("cart-updated")); setFeedback({type:'success', message:'Coupon removed'}); }}>Remove</button>
+            {couponCode ? (
+              <div style={{ marginTop: 12 }}>
+                <strong>Applied Coupon:</strong> {couponCode}
+                {appliedCoupon ? (
+                  <span>
+                    {' '}
+                    — {appliedCoupon.type === "FLAT"
+                      ? `Flat ₹${appliedCoupon.flatAmount || 0} off`
+                      : `${appliedCoupon.discountPercent || 0}% off`}
+                  </span>
+                ) : couponLoading ? (
+                  <span> — validating...</span>
+                ) : (
+                  <span> — invalid or expired</span>
+                )}
+                <button
+                  type="button"
+                  style={{ marginLeft: 12 }}
+                  onClick={() => {
+                    localStorage.removeItem("bakehub_coupon");
+                    window.dispatchEvent(new Event("cart-updated"));
+                    setCouponCode("");
+                    setAppliedCoupon(null);
+                    setFeedback({ type: "success", message: "Coupon removed" });
+                  }}
+                >
+                  Remove
+                </button>
               </div>
             ) : null}
             <div className="summary-row">
-              <span>Total</span>
+              <span>Subtotal</span>
               <strong>₹{totalPrice.toFixed(2)}</strong>
             </div>
+            {couponDiscount > 0 ? (
+              <>
+                <div className="summary-row">
+                  <span>Coupon discount</span>
+                  <strong>-₹{couponDiscount.toFixed(2)}</strong>
+                </div>
+                <div className="summary-row">
+                  <span>Total after discount</span>
+                  <strong>₹{discountedTotal.toFixed(2)}</strong>
+                </div>
+              </>
+            ) : couponCode ? (
+              <div className="summary-row">
+                <span>Coupon not applied</span>
+                <strong>₹{totalPrice.toFixed(2)}</strong>
+              </div>
+            ) : null}
             <button type="button" className="checkout-btn" onClick={handleCheckout} disabled={isSubmitting}>
               {isSubmitting ? "Placing Order..." : "Place Order"}
             </button>

@@ -67,14 +67,22 @@ function AdminOrders() {
     if (selected) stopPolling(); else startPolling();
   }, [selected]);
 
+  const getNextStatus = (status) => ({
+    PLACED: 'PREPARING',
+    PREPARING: 'READY',
+    READY: 'DELIVERED',
+    DISPATCHED: 'DELIVERED',
+    DELIVERED: 'COMPLETED'
+  })[status] || null;
+
+  const formatStatus = (status) => String(status || '').trim().toUpperCase();
+
   const advance = async (o) => {
-    const next = {
-      PLACED: 'PREPARING',
-      PREPARING: 'READY',
-      READY: 'DISPATCHED',
-      DISPATCHED: 'DELIVERED',
-      DELIVERED: 'COMPLETED'
-    }[o.status] || 'COMPLETED';
+    const next = getNextStatus(formatStatus(o.status));
+    if (!next) {
+      alert('Unable to advance this order');
+      return;
+    }
 
     try{
       await adminUpdateOrderStatus(o.id, next);
@@ -109,10 +117,10 @@ function AdminOrders() {
                     <span className="text-muted">—</span>
                   )}
                 </td>
-                <td><span className={`status-badge status-${o.status}`}>{o.status}</span></td>
+                <td><span className={`status-badge status-${formatStatus(o.status).toLowerCase()}`}>{formatStatus(o.status)}</span></td>
                 <td>₹{o.totalPrice}</td>
                 <td style={{display:'flex', gap:8}}>
-                  <button className="btn btn-primary" onClick={()=>advance(o)}>Advance</button>
+                  <button className="btn btn-primary" onClick={()=>advance(o)}>{getNextStatus(formatStatus(o.status)) ? `Advance to ${getNextStatus(formatStatus(o.status))}` : 'Done'}</button>
                   <button className="btn btn-ghost" onClick={async ()=>{
                     setLoadingDetails(true);
                     try{

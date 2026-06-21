@@ -256,6 +256,9 @@ function CustomCakes() {
     if (!deliveryDate) {
       return "Please choose a delivery date.";
     }
+    if (!deliveryTime) {
+      return "Please choose a delivery time.";
+    }
     return "";
   };
 
@@ -525,7 +528,23 @@ function CustomCakes() {
                     onChange={(event) => setDeliveryDate(event.target.value)}
                   />
                 </label>
+                <label>
+                  Delivery Time
+                  <input
+                    type="time"
+                    value={deliveryTime}
+                    onChange={(event) => setDeliveryTime(event.target.value)}
+                  />
+                </label>
               </div>
+              <label className="address-field">
+                Delivery Address
+                <textarea
+                  value={deliveryAddress}
+                  onChange={(event) => setDeliveryAddress(event.target.value)}
+                  placeholder="Enter full delivery address"
+                />
+              </label>
             </div>
           </article>
         </section>

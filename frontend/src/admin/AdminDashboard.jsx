@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { adminFetchOrders, adminFetchProducts } from "../api/client";
+import { adminFetchOrders, adminFetchProducts, fetchCoupons } from "../api/client";
 import illustrationImg from "../pages/admin-new.png";
 
 function AdminDashboard() {
   const [ordersCount, setOrdersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
+  const [couponsCount, setCouponsCount] = useState(0);
 
   useEffect(() => {
-    adminFetchOrders().then(list => setOrdersCount(list.length)).catch(()=>{});
-    adminFetchProducts().then(list => setProductsCount(list.length)).catch(()=>{});
+    adminFetchOrders().then((list) => setOrdersCount(list.length)).catch(() => {});
+    adminFetchProducts().then((list) => setProductsCount(list.length)).catch(() => {});
+    fetchCoupons().then((list) => setCouponsCount(list.length)).catch(() => {});
   }, []);
-
-  // UI-only placeholder for coupons (no backend change)
-  const couponsCount = 0;
 
   return (
     <div className="admin-dashboard">
