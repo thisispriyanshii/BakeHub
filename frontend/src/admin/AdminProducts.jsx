@@ -6,7 +6,7 @@ function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 });
+  const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'',  tags:'', calories:0 });
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -46,17 +46,12 @@ function AdminProducts() {
       setShowAdd(false);
       setIsEditing(false);
       setEditingId(null);
-      setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 });
+      setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'',  tags:'', calories:0 });
       load();
     }catch(e){ setAlert({ type: 'danger', title: 'Error!', message: e.message || (isEditing ? 'Update failed' : 'Create failed') }); }
   };
 
-  const toggleStock = async (p) => {
-    try{
-      await adminUpdateProduct(p.id, { ...p, inStock: !p.inStock });
-      load();
-    }catch(e){ setAlert({ type: 'warning', title: 'Warning!', message: 'Update failed' }); }
-  };
+
 
   const handleDelete = async (id) => {
     setDeleteCandidate(id);
@@ -146,7 +141,7 @@ function AdminProducts() {
           </div>
           <div style={{marginTop:8}}>
             <button className="btn btn-primary" onClick={handleAdd}>{isEditing ? 'Save Changes' : 'Create'}</button>
-            <button className="btn btn-ghost" onClick={()=>{ setShowAdd(false); setIsEditing(false); setEditingId(null); setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', inStock:true, tags:'', calories:0 }); }} style={{marginLeft:8}}>Cancel</button>
+            <button className="btn btn-ghost" onClick={()=>{ setShowAdd(false); setIsEditing(false); setEditingId(null); setForm({ name:'', description:'', price:0, categoryId:null, imageUrl:'', tags:'', calories:0 }); }} style={{marginLeft:8}}>Cancel</button>
           </div>
         </div>
       )}
@@ -159,10 +154,8 @@ function AdminProducts() {
               <h4>{p.name}</h4>
               <p>{p.description}</p>
               <p>₹{p.price}</p>
-              <p className="text-muted">Status: {p.inStock ? 'In Stock' : 'Out of Stock'}</p>
             </div>
               <div className="product-actions">
-                <button className="btn btn-ghost" onClick={()=>toggleStock(p)}>{p.inStock ? 'Mark Out of Stock' : 'Mark In Stock'}</button>
                 <button className="btn btn-ghost" onClick={()=>{
                   // open form for editing
                   setShowAdd(true);
@@ -174,7 +167,6 @@ function AdminProducts() {
                     price: p.price || 0,
                     categoryId: p.category?.id || p.categoryId || null,
                     imageUrl: p.imageUrl || '',
-                    inStock: p.inStock === undefined ? true : p.inStock,
                     tags: p.tags ? p.tags.join(',') : '',
                     calories: p.calories || 0
                   });

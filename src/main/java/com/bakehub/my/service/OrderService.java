@@ -66,16 +66,10 @@ public class OrderService {
 
     @Transactional
     public Order createCustomCakeOrder(String userEmail, CustomCakeOrderRequest request) {
-        if (request.getDeliveryAddress() == null || request.getDeliveryAddress().isBlank()) {
-            throw new IllegalArgumentException("Delivery address is required");
-        }
-
+        // Delivery address and time are optional for custom cake requests from the UI.
+        // Only delivery date is required so the bakery can schedule the order.
         if (request.getDeliveryDate() == null || request.getDeliveryDate().isBlank()) {
             throw new IllegalArgumentException("Delivery date is required");
-        }
-
-        if (request.getDeliveryTime() == null || request.getDeliveryTime().isBlank()) {
-            throw new IllegalArgumentException("Delivery time is required");
         }
 
         User user = userRepository.findByEmail(userEmail)
@@ -91,9 +85,13 @@ public class OrderService {
 
         Order order = new Order();
         order.setUser(user);
-        order.setDeliveryAddress(request.getDeliveryAddress());
+        if (request.getDeliveryAddress() != null && !request.getDeliveryAddress().isBlank()) {
+            order.setDeliveryAddress(request.getDeliveryAddress());
+        }
         order.setOccasion(request.getOccasion());
-        order.setDeliveryDate(LocalDate.parse(request.getDeliveryDate()));
+        if (request.getDeliveryDate() != null && !request.getDeliveryDate().isBlank()) {
+            order.setDeliveryDate(LocalDate.parse(request.getDeliveryDate()));
+        }
         // support coupon code if provided
         try { order.setCouponCode(request.getCouponCode()); } catch (Exception ignored) {}
 
