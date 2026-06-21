@@ -13,7 +13,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-import { getToken, fetchMyOrders, getStoredUser } from "../api/client";
+import { getToken, fetchMyOrders, getStoredUser, clearAuthSession } from "../api/client";
 import "./Navbar.css";
 
 function Navbar() {
@@ -119,6 +119,20 @@ function Navbar() {
     0
   );
 
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const user = getStoredUser();
+  const userInitial = (user && user.name) ? user.name.charAt(0).toUpperCase() : 'P';
+
+  const handleSignOut = () => {
+    clearAuthSession();
+    navigate('/login');
+  };
+
+  const handleMyOrders = () => {
+    setUserMenuOpen(false);
+    navigate('/orders');
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -174,7 +188,15 @@ function Navbar() {
             {totalCartItems > 0 && <span>{totalCartItems}</span>}
           </div>
 
-          <div className="profile">P</div>
+          <div className="profile-wrap">
+            <button className="profile" onClick={()=>setUserMenuOpen(!userMenuOpen)} aria-label="Account">{userInitial}</button>
+            {userMenuOpen && (
+              <div className="profile-menu" onMouseLeave={()=>setUserMenuOpen(false)}>
+                <button className="profile-menu-item" onClick={handleMyOrders}>My orders</button>
+                <button className="profile-menu-item" onClick={handleSignOut}>Log out</button>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 

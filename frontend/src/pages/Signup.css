@@ -17,7 +17,7 @@ body{
     width:100vw;
     min-height:100vh;
 
-    background-image:url("../assets/bakery-bg.png");
+    background-image:url("../assets/background.png");
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -41,26 +41,28 @@ body{
 }
 
 .welcome-text{
-    color:#ff9dc4;
+    color:#eb4286;
     letter-spacing:10px;
     font-size:1.1rem;
     margin-bottom:10px;
     font-family: 'Merriweather', serif;
     font-style: italic;
+    text-shadow:0 0 14px rgba(255,157,196,0.45);
 }
 
 .logo{
     font-family:'Great Vibes',cursive;
     font-size:4rem;
-    color:white;
+    color:#ffffff;
     line-height:1;
-    text-shadow:0 0 25px rgba(255,180,210,0.3);
+    text-shadow:0 0 24px rgba(255,157,196,0.5);
 }
 
 .tagline{
-    color:white;
+    color:#ffdee8;
     font-size:1.2rem;
     margin-top:10px;
+    text-shadow:0 0 16px rgba(255,157,196,0.28);
 }
 
 .signup-card{
@@ -73,15 +75,15 @@ body{
 
     border-radius:30px;
 
-    background:rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.24);
 
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
 
-    border:1px solid rgba(255,255,255,0.2);
+    border:1px solid rgba(255,255,255,0.32);
 
     box-shadow:
-        0 8px 32px rgba(255,182,193,0.15);
+        0 12px 42px rgba(0,0,0,0.16);
 
     display:flex;
     flex-direction:column;
@@ -89,7 +91,7 @@ body{
 }
 
 .signup-card h2{
-    color:white;
+    color:#4b3a3a;
     text-align:center;
     margin-bottom:15px;
     font-family: 'Merriweather', serif;
@@ -101,11 +103,11 @@ body{
 
     border-radius:14px;
 
-    border:1px solid rgba(255,255,255,0.25);
+    border:1px solid rgba(255,255,255,0.32);
 
-    background:rgba(255,255,255,0.05);
+    background:rgba(255,255,255,0.20);
 
-    color:white;
+    color:#4b3a3a;
 
     outline:none;
 
@@ -113,7 +115,7 @@ body{
 }
 
 .signup-card input::placeholder{
-    color:#d4d4d4;
+    color:#5a4a4a;
 }
 
 .signup-card button{
@@ -125,7 +127,7 @@ body{
 
     background:linear-gradient(180deg,#ff9fc6,#ff6f9a);
 
-    color:#140b10;
+    color:#f2ecef;
 
     font-weight:700;
 
@@ -133,8 +135,10 @@ body{
 
     cursor:pointer;
 
+    font-family: serif;
+
     transition:0.18s;
-    font-family: 'Merriweather', serif;
+    
 }
 
 .signup-card button:hover{
@@ -144,6 +148,8 @@ body{
 
 .login-link{
     text-align:center;
+    
+
     color:white;
     margin-top:5px;
 }
@@ -159,12 +165,13 @@ body{
 }
 
 .bottom-section h2{
-    color:white;
+    color:#f3ebee;
     font-weight:500;
+    text-shadow:0 0 16px rgba(255,157,196,0.32);
 }
 
 .bottom-section span{
-    color:#ff9dc4;
+    color:#eb4286;
 }
 
 .features{
@@ -182,14 +189,15 @@ body{
     flex-direction:column;
     align-items:center;
 
-    color:white;
+    color:#ffd8e7;
 
     gap:10px;
 }
 
 .feature svg{
     font-size:2.2rem;
-    color:#ff9dc4;
+    color:#eb4286;
+    text-shadow: 0 0 12px rgba(255,157,196,0.35);
 }
 
 .feature p{
@@ -197,7 +205,7 @@ body{
 }
 
 .login-link a{
-    color:#ff9dc4;
+    color:#eb4286;
     text-decoration:none;
     font-weight:500;
 }

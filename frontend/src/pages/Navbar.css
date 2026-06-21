@@ -110,9 +110,9 @@
 }
 
 .profile {
-  width: 38px;
+  width: 34px;
 
-  height: 38px;
+  height: 34px;
 
   border-radius: 50%;
 
@@ -126,6 +126,12 @@
 
   justify-content: center;
 }
+
+.profile-wrap{ position:relative }
+.profile{ cursor:pointer; font-weight:800 }
+.profile-menu{ position:absolute; right:0; top:48px; background:#fff; border-radius:8px; box-shadow:0 8px 30px rgba(0,0,0,0.12); display:flex; flex-direction:column; min-width:140px; overflow:hidden }
+.profile-menu-item{ background:none; border:none; padding:10px 12px; text-align:left; cursor:pointer; font-weight:600; color:#333 }
+.profile-menu-item:hover{ background:#fff0f4; color:#c2185b }
 
 @media (max-width: 980px) {
   .navbar {
