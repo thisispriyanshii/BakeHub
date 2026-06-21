@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
+import AlertBanner from "../components/AlertBanner";
 import { fetchMyOrders, getToken, fetchReviews, fetchReviewsByOrder, submitReview } from "../api/client";
 import "./Orders.css";
 
@@ -33,6 +34,7 @@ function Orders() {
   const [error, setError] = useState("");
   const [reviewed, setReviewed] = useState({});
   const [reviewDrafts, setReviewDrafts] = useState({});
+  const [alert, setAlert] = useState({ type: "", title: "", message: "" });
 
   const isDeliveredOrder = (order) => normalizeStatus(order?.status) === "DELIVERED";
 
@@ -89,6 +91,13 @@ function Orders() {
         <h1>My Orders</h1>
         <p>Track your custom cake requests and celebration orders.</p>
       </section>
+
+      <AlertBanner
+        type={alert.type}
+        title={alert.title}
+        message={alert.message}
+        onClose={() => setAlert({ type: "", title: "", message: "" })}
+      />
 
       <main className="orders-content">
         {loading && <p className="orders-message">Loading your orders...</p>}
@@ -186,12 +195,12 @@ function Orders() {
                           const draft = reviewDrafts[order.id] || {};
                           const text = (draft.text||'').trim();
                           const sentences = text.split('.').map(s=>s.trim()).filter(Boolean);
-                          if (sentences.length < 2) { alert('Please provide two short sentences.'); return; }
+                          if (sentences.length < 2) { setAlert({ type: 'warning', title: 'Warning!', message: 'Please provide two short sentences.' }); return; }
                           try {
                             await submitReview({ orderId: order.id, rating: draft.rating || 5, text });
                             setReviewed(prev => ({...prev, [order.id]: true}));
-                            alert('Thanks for your review!');
-                          } catch(err) { alert(err.message || 'Failed to submit review'); }
+                            setAlert({ type: 'success', title: 'Success!', message: 'Thanks for your review!' });
+                          } catch(err) { setAlert({ type: 'danger', title: 'Error!', message: err.message || 'Failed to submit review' }); }
                         }}>Submit Review</button>
                       </div>
                     </div>

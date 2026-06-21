@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import AlertBanner from "../components/AlertBanner";
 import { adminFetchOrders, adminUpdateOrderStatus, adminFetchOrder } from "../api/client";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [selected, setSelected] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+  const [actionAlert, setActionAlert] = useState({ type: '', title: '', message: '' });
 
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(null);
@@ -80,19 +82,25 @@ function AdminOrders() {
   const advance = async (o) => {
     const next = getNextStatus(formatStatus(o.status));
     if (!next) {
-      alert('Unable to advance this order');
+      setActionAlert({ type: 'warning', title: 'Warning!', message: 'Unable to advance this order' });
       return;
     }
 
     try{
       await adminUpdateOrderStatus(o.id, next);
       load();
-    }catch(e){ alert('Unable to update'); }
+    }catch(e){ setActionAlert({ type: 'danger', title: 'Error!', message: 'Unable to update' }); }
   };
 
   return (
     <div>
       <h1>Live Orders</h1>
+      <AlertBanner
+        type={actionAlert.type}
+        title={actionAlert.title}
+        message={actionAlert.message}
+        onClose={() => setActionAlert({ type: '', title: '', message: '' })}
+      />
       <div className="mt-12">
         <table className="table">
           <thead>
@@ -126,7 +134,7 @@ function AdminOrders() {
                     try{
                       const full = await adminFetchOrder(o.id);
                       setSelected(full);
-                    }catch(e){ alert('Unable to load order details'); }
+                    }catch(e){ setActionAlert({ type: 'danger', title: 'Error!', message: 'Unable to load order details' }); }
                     setLoadingDetails(false);
                   }}>{loadingDetails ? 'Loading...' : 'Details'}</button>
                 </td>
