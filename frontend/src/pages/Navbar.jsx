@@ -103,6 +103,24 @@ function Navbar() {
     window.dispatchEvent(new Event("cart-updated"));
   };
 
+  const updateCartQuantity = (id, diff) => {
+    const updated = cartItems
+      .map((item) => {
+        if (item.id !== id) return item;
+        const quantity = Math.max(0, Number(item.quantity || 0) + diff);
+        return {
+          ...item,
+          quantity,
+          estimatedPrice: (Number(item.price) || 0) * quantity,
+        };
+      })
+      .filter((item) => item.quantity > 0);
+
+    localStorage.setItem("bakehub_cart", JSON.stringify(updated));
+    setCartItems(updated);
+    window.dispatchEvent(new Event("cart-updated"));
+  };
+
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
     setIsDrawerOpen(false);
@@ -115,7 +133,7 @@ function Navbar() {
   }, 0);
 
   const totalCartPrice = cartItems.reduce(
-    (sum, item) => sum + (item.estimatedPrice || 0),
+    (sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 0),
     0
   );
 
@@ -171,11 +189,6 @@ function Navbar() {
         </div>
 
         <div className="right-icons">
-          <Link to="/celebrations" className="icon notification-icon" title="Celebrations">
-            <FaBell />
-            {notifCount>0 && <span className="notif-badge">{notifCount}</span>}
-          </Link>
-
           <div
             className="icon cart-icon-btn"
             onClick={() => setIsDrawerOpen(true)}
@@ -239,9 +252,8 @@ function Navbar() {
                           <h3>{item.name || item.flavor}</h3>
                           <div className="cart-item-details">
                             {item.category?.name && <p><span>Category:</span> {item.category.name}</p>}
-                            {item.quantity != null && <p><span>Qty:</span> {item.quantity}</p>}
-                            {item.price != null && <p><span>Unit:</span> ₹{item.price.toFixed(2)}</p>}
-                            <p><span>Total:</span> ₹{(item.estimatedPrice ?? item.price * item.quantity).toFixed(2)}</p>
+                            {item.price != null && <p><span>Unit:</span> ₹{Number(item.price).toFixed(2)}</p>}
+                            <p><span>Total:</span> ₹{((Number(item.price) || 0) * (Number(item.quantity) || 0)).toFixed(2)}</p>
                           </div>
                         </div>
                         <div className="cart-item-actions">
@@ -252,6 +264,25 @@ function Navbar() {
                           >
                             <FaTrash />
                           </button>
+                          <div className="cart-quantity-controls">
+                            <button
+                              type="button"
+                              className="qty-btn"
+                              onClick={() => updateCartQuantity(item.id, -1)}
+                              aria-label={`Decrease quantity for ${item.name || item.flavor}`}
+                            >
+                              -
+                            </button>
+                            <span className="qty-value">{item.quantity || 0}</span>
+                            <button
+                              type="button"
+                              className="qty-btn"
+                              onClick={() => updateCartQuantity(item.id, 1)}
+                              aria-label={`Increase quantity for ${item.name || item.flavor}`}
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -263,7 +294,7 @@ function Navbar() {
                 <div className="cart-drawer-footer">
                   <div className="cart-total-section">
                     <span>Total Est. Price</span>
-                    <strong>₹{totalCartPrice}</strong>
+                    <strong>₹{totalCartPrice.toFixed(2)}</strong>
                   </div>
                   <button
                     className="cart-checkout-btn"

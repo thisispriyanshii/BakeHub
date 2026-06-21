@@ -173,8 +173,8 @@ function Cart() {
       <section className="cart-hero">
         <div>
           <span className="eyebrow">Your Cart</span>
-          <h1>Review your items and delivery details.</h1>
-          <p>Add a delivery address, then place your order for fast checkout.</p>
+          <h1>Review your items and delivery details!</h1>
+          <p>Add a delivery address, then place your order for fast checkout</p>
         </div>
       </section>
 
@@ -221,22 +221,24 @@ function Cart() {
             </label>
             {couponCode ? (
               <div style={{ marginTop: 12 }}>
-                <strong>Applied Coupon:</strong> {couponCode}
-                {appliedCoupon ? (
-                  <span>
-                    {' '}
-                    — {appliedCoupon.type === "FLAT"
-                      ? `Flat ₹${appliedCoupon.flatAmount || 0} off`
-                      : `${appliedCoupon.discountPercent || 0}% off`}
-                  </span>
-                ) : couponLoading ? (
-                  <span> — validating...</span>
-                ) : (
-                  <span> — invalid or expired</span>
-                )}
+                <div>
+                  <strong>Applied Coupon:</strong> {couponCode}
+                  {appliedCoupon ? (
+                    <span>
+                      {' '}
+                      — {appliedCoupon.type === "FLAT"
+                        ? `Flat ₹${appliedCoupon.flatAmount || 0} off`
+                        : `${appliedCoupon.discountPercent || 0}% off`}
+                    </span>
+                  ) : couponLoading ? (
+                    <span> — validating...</span>
+                  ) : (
+                    <span> — invalid or expired</span>
+                  )}
+                </div>
                 <button
                   type="button"
-                  style={{ marginLeft: 12 }}
+                  className="coupon-remove-text"
                   onClick={() => {
                     localStorage.removeItem("bakehub_coupon");
                     window.dispatchEvent(new Event("cart-updated"));
