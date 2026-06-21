@@ -36,15 +36,21 @@ function Menu() {
         if (!mounted) return;
         if (Array.isArray(data)) {
           setProducts(
-            data.map((p) => ({
-              id: p.id,
-              name: p.name,
-              description: p.description || "",
-              price: p.price,
-              calories: Number(p.calories) || null,
-              imageUrl: p.imageUrl || p.image || "",
-              category: p.category || (p.categoryName ? { name: p.categoryName } : null),
-            }))
+            data
+              .map((p) => ({
+                id: p.id,
+                name: p.name,
+                description: p.description || "",
+                price: p.price,
+                calories: Number(p.calories) || null,
+                imageUrl: p.imageUrl || p.image || "",
+                category: p.category || (p.categoryName ? { name: p.categoryName } : null),
+              }))
+              .filter((product) => {
+                const categoryName = (product.category?.name || "").toLowerCase();
+                const productName = (product.name || "").toLowerCase();
+                return !categoryName.includes("custom cake") && !productName.includes("custom cake");
+              })
           );
         }
       })
@@ -58,13 +64,27 @@ function Menu() {
   }, []);
 
   const categories = useMemo(() => {
+    const desiredOrder = ["cookies", "brownies", "cupcakes", "dessert boxes", "hampers"];
     const list = [];
+
     products.forEach((p) => {
       const name = p?.category?.name || p?.categoryName || "Uncategorized";
       if (!name) return;
+      if (name.toLowerCase().includes("custom cake")) return;
       if (!list.includes(name)) list.push(name);
     });
-    return list;
+
+    return list.sort((a, b) => {
+      const lowerA = a.toLowerCase();
+      const lowerB = b.toLowerCase();
+      const indexA = desiredOrder.indexOf(lowerA);
+      const indexB = desiredOrder.indexOf(lowerB);
+
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      return lowerA.localeCompare(lowerB);
+    });
   }, [products]);
 
   useEffect(() => {
