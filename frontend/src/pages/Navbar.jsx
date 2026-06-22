@@ -182,7 +182,7 @@ function Navbar() {
 
           <NavLink to="/celebrations" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>
             <FaGift />
-            Celebrations
+               Offers
           </NavLink>
 
           <NavLink to="/orders" className={({isActive}) => isActive ? "nav-item active" : "nav-item"}>

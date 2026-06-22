@@ -37,7 +37,7 @@ function Celebrations() {
       />
 
       <section className="celebrations-list">
-        <h2>Customer Reviews (Top rated)</h2>
+        <h2>Customer Reviews</h2>
         <div className="celebration-grid">
           {reviews.length === 0 ? (
             <p style={{padding:20}}>No reviews yet.</p>
