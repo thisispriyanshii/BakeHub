@@ -18,14 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bakehub.my.service.S3Service;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.List;
 
 @RestController
@@ -37,6 +33,9 @@ public class ProductController {
 
     @Autowired
     private com.bakehub.my.repository.OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private S3Service s3Service;
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
@@ -91,14 +90,7 @@ public class ProductController {
             return ResponseEntity.badRequest().body(Map.of("error", "No file provided"));
         }
 
-        String uploadDir = "uploads";
-        Files.createDirectories(Paths.get(uploadDir));
-
-        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path target = Paths.get(uploadDir).resolve(filename);
-        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-
-        String url = "/api/uploads/" + filename;
+        String url = s3Service.uploadFile(file);
         Map<String, String> resp = new HashMap<>();
         resp.put("url", url);
         return ResponseEntity.ok(resp);
