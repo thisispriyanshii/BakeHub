@@ -16,9 +16,23 @@ public class PublicProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private com.bakehub.my.service.S3Service s3Service;
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.findAll());
+        List<Product> products = productService.findAll();
+        for (Product p : products) {
+            try {
+                String key = p.getImageUrl();
+                if (key != null && !key.isBlank() && !key.startsWith("http")) {
+                    String url = s3Service.generatePresignedUrl(key);
+                    p.setImageUrl(url);
+                }
+            } catch (Exception ignored) {
+                // if presign fails, return product without changing image
+            }
+        }
+        return ResponseEntity.ok(products);
     }
 }

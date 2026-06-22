@@ -1,18 +1,27 @@
 package com.bakehub.my.entity;
 
+import jakarta.persistence.Access;
+import jakarta.persistence.AccessType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "product")
 public class Product {
 
@@ -35,7 +44,11 @@ public class Product {
     private Category category;
 
     @NotBlank(message = "Image URL is required")
+    @Access(AccessType.FIELD)
+    @JsonProperty("imageUrl")
+    @Column(name = "image_url")
     private String imageUrl;
+
 
     private Integer calories;
     
@@ -88,13 +101,6 @@ public class Product {
         this.category = category;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
 
     public Integer getCalories() {
         return calories;
@@ -104,6 +110,16 @@ public class Product {
         this.calories = calories;
     }
 
+    @JsonProperty("imageUrl")
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    @JsonProperty("imageUrl")
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public Boolean getInStock() {
         return inStock;
     }
@@ -111,6 +127,7 @@ public class Product {
     public void setInStock(Boolean inStock) {
         this.inStock = inStock;
     }
+
 
     public List<String> getTags() {
         return tags;

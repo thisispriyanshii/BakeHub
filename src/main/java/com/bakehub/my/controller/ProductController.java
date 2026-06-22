@@ -40,12 +40,14 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.findAll();
+        products.forEach(this::populateProductImageUrl);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
     public ResponseEntity<Product> addProduct(@Valid @RequestBody Product product) {
         Product savedProduct = productService.save(product);
+        populateProductImageUrl(savedProduct);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
@@ -57,7 +59,23 @@ public class ProductController {
 
         product.setId(id);
         Product updatedProduct = productService.save(product);
+        populateProductImageUrl(updatedProduct);
         return ResponseEntity.ok(updatedProduct);
+    }
+
+    private void populateProductImageUrl(Product product) {
+        if (product == null) {
+            return;
+        }
+        String key = product.getImageUrl();
+        if (key != null && !key.isBlank() && !key.startsWith("http")) {
+            try {
+                String url = s3Service.generatePresignedUrl(key);
+                product.setImageUrl(url);
+            } catch (Exception ignored) {
+                // keep the existing key if presign generation fails
+            }
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -90,9 +108,15 @@ public class ProductController {
             return ResponseEntity.badRequest().body(Map.of("error", "No file provided"));
         }
 
-        String url = s3Service.uploadFile(file);
-        Map<String, String> resp = new HashMap<>();
-        resp.put("url", url);
-        return ResponseEntity.ok(resp);
+        try {
+            String key = s3Service.uploadFile(file);
+            String url = s3Service.generatePresignedUrl(key);
+            Map<String, String> resp = new HashMap<>();
+            resp.put("url", url);
+            resp.put("key", key);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Upload failed: " + e.getMessage()));
+        }
     }
 }

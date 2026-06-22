@@ -5,39 +5,68 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.UUID;
 
 @Service
 public class S3Service {
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
     private final String bucketName;
-    private final String region;
 
     public S3Service(S3Client s3Client,
-                     @Value("${aws.s3.bucket}") String bucketName,
-                     @Value("${aws.region}") String region) {
+                     S3Presigner s3Presigner,
+                     @Value("${aws.s3.bucket}") String bucketName) {
         this.s3Client = s3Client;
+        this.s3Presigner = s3Presigner;
         this.bucketName = bucketName;
-        this.region = region;
     }
 
+    // ✅ Upload file → return KEY only
     public String uploadFile(MultipartFile file) throws IOException {
-        String filename = UUID.randomUUID() + "_" + Paths.get(file.getOriginalFilename()).getFileName();
+
+        String filename = UUID.randomUUID() + "_" +
+                Paths.get(file.getOriginalFilename()).getFileName();
+
+        String key = "products/" + filename;
+
         PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key("products/" + filename)
+                .key(key)
                 .contentType(file.getContentType())
-                .acl(ObjectCannedACL.PUBLIC_READ)
                 .build();
 
-        s3Client.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
+        s3Client.putObject(
+                request,
+                RequestBody.fromInputStream(file.getInputStream(), file.getSize())
+        );
 
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, request.key());
+        return key; // IMPORTANT
+    }
+
+    // ✅ Convert key → temporary URL
+    public String generatePresignedUrl(String key) {
+
+        GetObjectRequest getRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(60))
+                .getObjectRequest(getRequest)
+                .build();
+
+        return s3Presigner.presignGetObject(presignRequest)
+                .url()
+                .toString();
     }
 }

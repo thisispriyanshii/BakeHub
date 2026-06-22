@@ -7,6 +7,7 @@ function AdminProducts() {
   const [loading, setLoading] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: '', description:'', price:0, categoryId:null, imageUrl:'',  tags:'', calories:0 });
+  const [previewUrl, setPreviewUrl] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -25,7 +26,10 @@ function AdminProducts() {
     if (!f) return;
     try {
       const data = await adminUploadImage(f);
-      setForm({...form, imageUrl: data.url});
+      // store S3 key (object key) as the persistent product image reference
+      setForm({...form, imageUrl: data.key});
+      // keep the presigned URL for an immediate preview
+      setPreviewUrl(data.url || '');
     } catch(err){ setAlert({ type: 'danger', title: 'Error!', message: err.message || 'Upload failed' }); }
   };
 
@@ -133,7 +137,11 @@ function AdminProducts() {
           <div className="mb-8">
             <label>Image</label>
             <input className="input" type="file" accept="image/*" onChange={handleFile} />
-            {form.imageUrl && (<div className="mt-12"><img src={form.imageUrl} style={{maxWidth:120}} alt="preview"/></div>)}
+            {(previewUrl || form.imageUrl) && (
+              <div className="mt-12">
+                <img src={previewUrl || form.imageUrl} style={{maxWidth:120}} alt="preview"/>
+              </div>
+            )}
           </div>
           <div className="mb-8">
             <label>Tags (comma separated)</label>
