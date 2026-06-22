@@ -97,7 +97,7 @@
 }
 
 .menu-content {
-  max-width: 1300px;
+  max-width: 1050px;
   margin: 0 auto;
   padding: 20px 24px 80px;
   background: transparent; /* removed parent card background */
@@ -136,7 +136,10 @@
 
 .category-grid {
   display: grid;
-  gap: 36px;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: stretch;
+  width: 100%;
 }
 
 .menu-error,
