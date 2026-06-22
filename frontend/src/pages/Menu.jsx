@@ -31,6 +31,7 @@ function Menu() {
     [location.search]
   );
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [cart, setCart] = useState(() => loadStoredCart());
 
@@ -62,6 +63,10 @@ function Menu() {
       })
       .catch(() => {
         // leave products empty on failure
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
       });
 
     return () => {
@@ -235,7 +240,11 @@ function Menu() {
       </nav>
 
       <div className="menu-content">
-        {products.length === 0 ? (
+        {loading ? (
+          <div className="menu-loading">
+            <div className="spinner" />
+          </div>
+        ) : products.length === 0 ? (
           <p className="empty-state">No products available.</p>
         ) : (
           <section className="all-products">
