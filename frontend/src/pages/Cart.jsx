@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import rightImg from "../assets/custom.jpeg";
 import { fetchCoupons, submitMenuOrder, submitCustomCakeOrder, getToken } from "../api/client";
-import rightImg from "../assets/right.png";
 import "./Cart.css";
 
 const CART_KEY = "bakehub_cart";

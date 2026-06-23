@@ -30,7 +30,7 @@ public class S3Service {
         this.bucketName = bucketName;
     }
 
-    // ✅ Upload file → return KEY only
+
     public String uploadFile(MultipartFile file) throws IOException {
 
         String filename = UUID.randomUUID() + "_" +
@@ -49,10 +49,10 @@ public class S3Service {
                 RequestBody.fromInputStream(file.getInputStream(), file.getSize())
         );
 
-        return key; // IMPORTANT
+        return key; 
     }
 
-    // ✅ Convert key → temporary URL
+
     public String generatePresignedUrl(String key) {
 
         GetObjectRequest getRequest = GetObjectRequest.builder()

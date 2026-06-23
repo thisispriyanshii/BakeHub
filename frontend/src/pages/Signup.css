@@ -16,8 +16,9 @@ body{
 .auth-container{
     width:100vw;
     min-height:100vh;
+    background-image:url('../assets/background.png');
 
-    background-image:url("../assets/background.png");
+    background-color:#f7f2f3;
     background-size:cover;
     background-position:center;
     background-repeat:no-repeat;
@@ -125,9 +126,9 @@ body{
 
     border-radius:14px;
 
-    background:linear-gradient(180deg,#ff9fc6,#ff6f9a);
+    background:linear-gradient(180deg,#ff9fc6);
 
-    color:#f2ecef;
+    color:#0f0e0f;
 
     font-weight:700;
 
@@ -150,12 +151,12 @@ body{
     text-align:center;
     
 
-    color:white;
+    color:rgb(6, 5, 5);
     margin-top:5px;
 }
 
 .login-link span{
-    color:#ff9dc4;
+    color:#0a0a0a;
     cursor:pointer;
 }
 
@@ -165,13 +166,13 @@ body{
 }
 
 .bottom-section h2{
-    color:#f3ebee;
+    color:#181818;
     font-weight:500;
     text-shadow:0 0 16px rgba(255,157,196,0.32);
 }
 
 .bottom-section span{
-    color:#eb4286;
+    color:#111111;
 }
 
 .features{
@@ -189,7 +190,7 @@ body{
     flex-direction:column;
     align-items:center;
 
-    color:#ffd8e7;
+    color:#090909;
 
     gap:10px;
 }

@@ -34,10 +34,23 @@ function AdminProducts() {
   };
 
   const handleAdd = async () => {
+    const priceValue = Number(form.price);
+    const caloriesValue = form.calories !== undefined && form.calories !== null ? Number(form.calories) : undefined;
+
+    if (Number.isNaN(priceValue) || priceValue < 0) {
+      setAlert({ type: 'danger', title: 'Error!', message: 'Price cannot be negative' });
+      return;
+    }
+
+    if (caloriesValue !== undefined && caloriesValue < 0) {
+      setAlert({ type: 'danger', title: 'Error!', message: 'Calories cannot be negative' });
+      return;
+    }
+
     const payload = { 
-      ...form, 
-      price: Number(form.price),
-      calories: form.calories !== undefined ? Number(form.calories) : undefined,
+      ...form,
+      price: priceValue,
+      calories: caloriesValue,
       category: form.categoryId ? { id: form.categoryId } : null,
       tags: form.tags ? form.tags.split(',').map(t=>t.trim()).filter(Boolean) : []
     };
