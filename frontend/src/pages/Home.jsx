@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom"; // Import Link for internal routing
 import Navbar from "./Navbar";
-import mainimage from "./banner.png";
-import banner3 from "./3banner.png";
-import banner4 from "./4banner.png";
-import brownies from "./brownie.png";
-import cupcakes from "./cupcakes.png";
-import dessertbox from "./dessertbox.png";
-import cookies from "./cookies.png";
+import mainimage from "../assets/banner.png";
+import banner3 from "../assets/3banner.png";
+import banner4 from "../assets/4banner.png";
+import brownies from "../assets/brownie.png";
+import cupcakes from "../assets/cupcakes.png";
+import dessertbox from "../assets/dessertbox.png";
+import cookies from "../assets/cookies.png";
 import hampers from "./hampers.png";
-import cakes from "./cake.png";
+import cakes from "../assets/cake.png";
 import "./Home.css";
 import {FaBirthdayCake} from "react-icons/fa";
 

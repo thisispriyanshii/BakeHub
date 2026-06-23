@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { fetchCoupons, submitMenuOrder, submitCustomCakeOrder, getToken } from "../api/client";
+import rightImg from "../assets/right.png";
 import "./Cart.css";
 
 const CART_KEY = "bakehub_cart";
@@ -192,7 +193,11 @@ function Cart() {
               cartItems.map((item) => (
                 <div key={item.id} className="cart-item-row">
                   <div className="cart-item-image">
-                    {item.imageUrl ? <img src={item.imageUrl} alt={item.name} /> : null}
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.name} />
+                    ) : item.type === "custom" ? (
+                      <img src={rightImg} alt="Custom Cake" className="cart-item-custom-image" />
+                    ) : null}
                   </div>
                   <div className="cart-item-meta">
                     <h3>{item.name || item.flavor}</h3>

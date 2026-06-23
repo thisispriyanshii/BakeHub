@@ -1,6 +1,6 @@
 .cart-page {
   min-height: 100vh;
-  background: #f4c0e3;
+  background: #f9d3ec;
 }
 
 .cart-hero {
@@ -12,7 +12,7 @@
 .cart-hero .eyebrow {
   display: inline-block;
   margin-bottom: 16px;
-  color: #a678d2;
+  color: #f4addc;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -70,6 +70,16 @@
   height: 100%;
   object-fit: cover;
   border-radius: 18px;
+}
+
+.cart-item-custom-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f8e0e6 0%, #fde8ec 100%);
+  padding: 12px;
+  box-sizing: border-box;
 }
 
 .cart-item-meta h3 {

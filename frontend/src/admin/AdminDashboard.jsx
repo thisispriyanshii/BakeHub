@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminFetchOrders, adminFetchProducts, fetchCoupons } from "../api/client";
-import illustrationImg from "../pages/admin-new.png";
+import illustrationImg from "../assets/admin-new.png";
 
 function AdminDashboard() {
   const [ordersCount, setOrdersCount] = useState(0);
@@ -18,7 +18,7 @@ function AdminDashboard() {
     <div className="admin-dashboard">
       <section className="admin-hero">
         <div className="hero-left">
-          <h1 className="greeting">Hello, Baker <span role="img" aria-label="waving">👋</span></h1>
+          <h1 className="greeting">Hello, Baker! <span role="img" aria-label="waving"></span></h1>
           <p className="subhead">Here's what's happening in your kitchen today.</p>
         </div>
 

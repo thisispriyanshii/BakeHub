@@ -1,22 +1,22 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import customCakeRound from "./customcakeround.png";
-import customCakeSquare from "./customcakesquare.png";
-import customCakeHeart from "./customcakeheart.png";
-import customCakeRectangle from "./customcakerectangle.png";
-import chocolateTruffleImg from "./chocolatetruffle.png";
-import redVelvetImg from "./redvelvet.png";
-import blackForestImg from "./blackforest.png";
-import butterscotchImg from "./butterscotch.png";
-import vanillaImg from "./vanilla.png";
-import blueberryImg from "./blueberry.png";
-import strawberryImg from "./strawberry.png";
-import buttercreamImg from "./buttercream-frosting.png";
-import whippedCreamImg from "./whippedcream-frosting.png";
-import fondantImg from "./fondant-frosting.png";
-import semiNakedImg from "./seminaked-frosting.png";
-import dripCakeImg from "./dripcake-frosting.png";
+import customCakeRound from "../assets/customcakeround.png";
+import customCakeSquare from "../assets/customcakesquare.png";
+import customCakeHeart from "../assets/customcakeheart.png";
+import customCakeRectangle from "../assets/customcakerectangle.png";
+import chocolateTruffleImg from "../assets/chocolatetruffle.png";
+import redVelvetImg from "../assets/redvelvet.png";
+import blackForestImg from "../assets/blackforest.png";
+import butterscotchImg from "../assets/butterscotch.png";
+import vanillaImg from "../assets/vanilla.png";
+import blueberryImg from "../assets/blueberry.png";
+import strawberryImg from "../assets/strawberry.png";
+import buttercreamImg from "../assets/buttercream-frosting.png";
+import whippedCreamImg from "../assets/whippedcream-frosting.png";
+import fondantImg from "../assets/fondant-frosting.png";
+import semiNakedImg from "../assets/seminaked-frosting.png";
+import dripCakeImg from "../assets/dripcake-frosting.png";
 import {
   fetchCustomizations,
   getToken,

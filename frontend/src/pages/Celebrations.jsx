@@ -8,6 +8,7 @@ function Celebrations() {
   const [reviews, setReviews] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [alert, setAlert] = useState({ type: "", title: "", message: "" });
+  const [appliedCouponCode, setAppliedCouponCode] = useState(() => localStorage.getItem("bakehub_coupon") || "");
 
   useEffect(() => {
     fetchReviews(3.5, 10).then(setReviews).catch(() => setReviews([]));
@@ -17,7 +18,8 @@ function Celebrations() {
   const applyCoupon = (code) => {
     localStorage.setItem("bakehub_coupon", code);
     window.dispatchEvent(new Event("cart-updated"));
-    setAlert({ type: "success", title: "Success!", message: `Coupon ${code} applied. It will show up in your cart.` });
+    setAppliedCouponCode(code);
+    setAlert({ type: "success", title: "Success!", message: `✓ Coupon ${code} applied successfully to cart!` });
   };
 
   return (
@@ -60,7 +62,14 @@ function Celebrations() {
           ) : (
             coupons.map((c) => (
               <article key={c.id} className="offer-card">
-                <h3>{c.code}</h3>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", gap: "12px" }}>
+                  <div>
+                    <h3>{c.code}</h3>
+                  </div>
+                  {appliedCouponCode === c.code && (
+                    <div className="coupon-applied-badge">✓ Applied</div>
+                  )}
+                </div>
                 <p>
                   {c.type === "FLAT"
                     ? `Flat ₹${c.flatAmount || 0} off`
@@ -69,7 +78,14 @@ function Celebrations() {
                 </p>
                 <p>{c.expiresAt ? `Expires ${c.expiresAt}` : "No expiry"}</p>
                 <div className="offer-qualifier">{c.active ? 'Active' : 'Inactive'}</div>
-                <button className="btn btn-primary" style={{marginTop:12}} onClick={() => applyCoupon(c.code)}>Use Code</button>
+                <button 
+                  className={`btn btn-primary ${appliedCouponCode === c.code ? "applied" : ""}`}
+                  style={{marginTop:12}} 
+                  onClick={() => applyCoupon(c.code)}
+                  disabled={appliedCouponCode === c.code}
+                >
+                  {appliedCouponCode === c.code ? "✓ Applied" : "Use Code"}
+                </button>
               </article>
             ))
           )}
