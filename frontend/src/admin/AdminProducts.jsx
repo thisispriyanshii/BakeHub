@@ -36,6 +36,13 @@ function AdminProducts() {
   const handleAdd = async () => {
     const priceValue = Number(form.price);
     const caloriesValue = form.calories !== undefined && form.calories !== null ? Number(form.calories) : undefined;
+    const trimmedName = (form.name || '').trim();
+    const trimmedDescription = (form.description || '').trim();
+
+    if (!trimmedName) {
+      setAlert({ type: 'danger', title: 'Error!', message: 'Product name cannot be empty' });
+      return;
+    }
 
     if (Number.isNaN(priceValue) || priceValue < 0) {
       setAlert({ type: 'danger', title: 'Error!', message: 'Price cannot be negative' });
@@ -49,6 +56,8 @@ function AdminProducts() {
 
     const payload = { 
       ...form,
+      name: trimmedName,
+      description: trimmedDescription,
       price: priceValue,
       calories: caloriesValue,
       category: form.categoryId ? { id: form.categoryId } : null,

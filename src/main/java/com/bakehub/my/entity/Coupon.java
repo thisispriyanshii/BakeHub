@@ -3,6 +3,7 @@ package com.bakehub.my.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,9 +27,11 @@ public class Coupon {
     private Double minAmount;
 
     private Boolean active = true;
-
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "expires_at")
     private LocalDate expiresAt;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 }

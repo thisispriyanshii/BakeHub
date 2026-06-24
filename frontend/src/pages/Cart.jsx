@@ -106,10 +106,30 @@ function Cart() {
       return;
     }
 
-    if (!address.trim()) {
+    const trimmedAddress = (address || '').trim();
+    if (!trimmedAddress) {
       setFeedback({ type: "error", message: "Please enter a delivery address." });
       return;
     }
+
+    // Basic delivery address validation: require reasonable length and at least one alphanumeric character
+    if (trimmedAddress.length < 10) {
+      setFeedback({ type: "error", message: "Please enter a more detailed delivery address (at least 10 characters)." });
+      return;
+    }
+
+    if (!/[A-Za-z0-9]/.test(trimmedAddress)) {
+      setFeedback({ type: "error", message: "Please enter a valid delivery address." });
+      return;
+    }
+
+    // Require a 6-digit pincode (e.g., Indian pincode) somewhere in the address
+    const pincodeMatch = trimmedAddress.match(/\b(\d{6})\b/);
+    if (!pincodeMatch) {
+      setFeedback({ type: "error", message: "Please include a valid 6-digit pincode in the delivery address." });
+      return;
+    }
+    const deliveryPincode = pincodeMatch[1];
 
     if (!getToken()) {
       setFeedback({ type: "error", message: "Please log in to complete checkout." });
@@ -133,7 +153,8 @@ function Cart() {
 
       if (menuItems.length > 0) {
         const orderPayload = {
-          deliveryAddress: address.trim(),
+          deliveryAddress: trimmedAddress,
+          deliveryPincode,
           items: menuItems.map((item) => ({
             productId: item.productId || item.id,
             quantity: item.quantity,
@@ -148,7 +169,8 @@ function Cart() {
       for (const item of customItems) {
         const customPayload = {
           ...item,
-          deliveryAddress: address.trim(),
+          deliveryAddress: trimmedAddress,
+          deliveryPincode,
           couponCode: localStorage.getItem("bakehub_coupon") || null,
         };
         await submitCustomCakeOrder(customPayload);

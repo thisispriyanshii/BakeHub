@@ -201,17 +201,42 @@ function AdminOrders() {
 function renderCustomization(details) {
   if (!details) return <span className="text-muted">—</span>;
 
-  // attempt JSON parse for structured custom cake details
-  try {
-    const obj = typeof details === 'string' ? JSON.parse(details) : details;
-    // pretty render key-values
-    return (
-      <pre>{JSON.stringify(obj, null, 2)}</pre>
-    );
-  } catch (e) {
-    // fallback to plain text
+  let parsed;
+  if (typeof details === 'string') {
+    try {
+      parsed = JSON.parse(details);
+    } catch {
+      return <div>{details}</div>;
+    }
+  } else {
+    parsed = details;
+  }
+
+  if (!parsed || typeof parsed !== 'object') {
     return <div>{details}</div>;
   }
+
+  const entries = Object.entries(parsed).filter(([, value]) => value !== null && value !== undefined && value !== '');
+  if (!entries.length) {
+    return <span className="text-muted">—</span>;
+  }
+
+  return (
+    <div style={{ display: 'grid', gap: 4 }}>
+      {entries.map(([key, value]) => (
+        <div key={key}>
+          <strong>{humanizeKey(key)}:</strong> {Array.isArray(value) ? value.join(', ') : String(value)}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function humanizeKey(key) {
+  return key
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/_/g, ' ')
+    .replace(/^./, (char) => char.toUpperCase());
 }
 
 export default AdminOrders;

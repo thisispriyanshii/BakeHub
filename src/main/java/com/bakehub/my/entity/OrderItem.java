@@ -24,6 +24,7 @@ public class OrderItem {
     private Integer quantity;
     private Double itemPrice;
     private Double lineTotal;
-    @Column(columnDefinition = "TEXT")
+
+    @Column(name = "customization_details", columnDefinition = "TEXT")
     private String customizationDetails;
 }

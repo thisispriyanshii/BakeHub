@@ -55,6 +55,21 @@ function AdminCoupons() {
       return setAlert({ type: "warning", title: "Warning!", message: "Enter a flat discount amount greater than 0." });
     }
 
+    if (payload.minAmount < 0) {
+      return setAlert({ type: "warning", title: "Warning!", message: "Minimum order amount cannot be negative." });
+    }
+
+    // If an expiry date is provided, it must not be earlier than today
+    if (payload.expiresAt) {
+      const selected = new Date(payload.expiresAt);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      selected.setHours(0, 0, 0, 0);
+      if (selected < today) {
+        return setAlert({ type: "warning", title: "Warning!", message: "Expiry date cannot be before today." });
+      }
+    }
+
     try {
       await adminCreateCoupon(payload);
       setAlert({ type: "success", title: "Success!", message: "Coupon created." });
