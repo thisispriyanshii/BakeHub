@@ -1,6 +1,6 @@
 # BakeHub
 
-Full Stack Cloud Kitchen Bakery Ordering Platform built using Spring Boot, React, MySQL and Docker.
+A full-stack cloud kitchen bakery ordering platform built with Spring Boot, React, MySQL, and Docker.
 
 ## Features
 
